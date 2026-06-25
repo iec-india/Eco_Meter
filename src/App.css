@@ -1,0 +1,428 @@
+/* ===============================
+   ECO METER MODERN UI
+================================ */
+
+*{
+  margin:0;
+  padding:0;
+  box-sizing:border-box;
+}
+
+body{
+  background:#eef3f7;
+  font-family:'Segoe UI',Roboto,sans-serif;
+}
+
+/* Main Container */
+
+.app{
+  min-height:100vh;
+  padding:40px 20px;
+}
+
+.container{
+  max-width:1100px;
+  margin:auto;
+  background:#fff;
+  border-radius:20px;
+  overflow:hidden;
+  box-shadow:
+      0 12px 30px rgba(0,0,0,.08);
+}
+
+/* ===============================
+ Header
+================================ */
+
+.header{
+
+  background:linear-gradient(
+      135deg,
+      #145c32,
+      #198754
+  );
+
+  color:white;
+
+  text-align:center;
+
+  padding:40px;
+}
+
+.header h1{
+
+  font-size:34px;
+
+  margin-bottom:10px;
+}
+
+.header p{
+
+  opacity:.9;
+
+  font-size:17px;
+}
+
+
+/* ===============================
+Form Area
+================================ */
+
+.content{
+
+  padding:40px;
+}
+
+/* ===============================
+Card
+================================ */
+
+.card{
+
+  background:white;
+
+  border-radius:18px;
+
+  padding:30px;
+
+  border:1px solid #e5e7eb;
+
+  box-shadow:
+
+  0 8px 20px rgba(0,0,0,.05);
+
+  margin-bottom:35px;
+
+  transition:.3s;
+}
+
+.card:hover{
+
+  transform:translateY(-3px);
+
+  box-shadow:
+
+  0 15px 35px rgba(0,0,0,.08);
+}
+
+/* ===============================
+Card Header
+================================ */
+
+.card-header{
+
+  display:flex;
+
+  justify-content:space-between;
+
+  align-items:center;
+
+  margin-bottom:25px;
+
+  border-bottom:1px solid #ececec;
+
+  padding-bottom:15px;
+}
+
+.card-title{
+
+  font-size:24px;
+
+  color:#145c32;
+
+  font-weight:700;
+}
+
+.card-subtitle{
+
+  color:#6b7280;
+
+  margin-top:5px;
+
+  font-size:15px;
+}
+
+.step{
+
+  background:#eaf8ef;
+
+  color:#198754;
+
+  padding:8px 18px;
+
+  border-radius:30px;
+
+  font-weight:600;
+
+  font-size:14px;
+}
+
+/* ===============================
+Grid
+================================ */
+
+.form-grid{
+
+  display:grid;
+
+  grid-template-columns:
+      repeat(auto-fit,minmax(300px,1fr));
+
+  gap:25px;
+}
+
+/* ===============================
+Form Group
+================================ */
+
+.form-group{
+
+  display:flex;
+
+  flex-direction:column;
+}
+
+.form-group label{
+
+  margin-bottom:8px;
+
+  color:#374151;
+
+  font-weight:600;
+
+  font-size:15px;
+}
+
+/* ===============================
+Input
+================================ */
+
+.form-control{
+
+  width:100%;
+
+  padding:14px 16px;
+
+  border-radius:12px;
+
+  border:1px solid #d5dce3;
+
+  background:#fafafa;
+
+  font-size:15px;
+
+  transition:.3s;
+
+  outline:none;
+}
+
+.form-control:hover{
+
+  border-color:#198754;
+}
+
+.form-control:focus{
+
+  background:white;
+
+  border-color:#198754;
+
+  box-shadow:
+
+  0 0 0 4px
+
+  rgba(25,135,84,.15);
+}
+
+/* ===============================
+Criteria Card
+================================ */
+
+.criteria-card{
+
+  border:1px solid #e6e8eb;
+
+  border-radius:15px;
+
+  padding:22px;
+
+  background:white;
+
+  margin-bottom:25px;
+
+  transition:.3s;
+}
+
+.criteria-card:hover{
+
+  box-shadow:
+
+  0 10px 25px rgba(0,0,0,.06);
+}
+
+/* ===============================
+Option
+================================ */
+
+.option{
+
+  display:flex;
+
+  gap:15px;
+
+  align-items:flex-start;
+
+  padding:16px;
+
+  border-radius:12px;
+
+  border:1px solid #d8dde3;
+
+  margin-top:12px;
+
+  cursor:pointer;
+
+  transition:.25s;
+}
+
+.option:hover{
+
+  background:#f4fbf7;
+
+  border-color:#198754;
+}
+
+.option.selected{
+
+  border:2px solid #198754;
+
+  background:#eefaf2;
+}
+
+.option-circle{
+
+  width:20px;
+
+  height:20px;
+
+  border-radius:50%;
+
+  border:2px solid #adb5bd;
+
+  margin-top:2px;
+
+  transition:.25s;
+}
+
+.option.selected .option-circle{
+
+  border:6px solid #198754;
+}
+
+.option-title{
+
+  font-weight:700;
+
+  color:#198754;
+
+  margin-bottom:5px;
+}
+
+/* ===============================
+Button
+================================ */
+
+.btn{
+
+  width:100%;
+
+  border:none;
+
+  border-radius:14px;
+
+  padding:18px;
+
+  background:linear-gradient(
+      135deg,
+      #198754,
+      #145c32
+  );
+
+  color:white;
+
+  font-size:18px;
+
+  font-weight:700;
+
+  cursor:pointer;
+
+  transition:.3s;
+}
+
+.btn:hover{
+
+  transform:translateY(-2px);
+
+  box-shadow:
+
+  0 12px 25px rgba(25,135,84,.3);
+}
+
+/* ===============================
+Success
+================================ */
+
+.success{
+
+  background:#dff6e7;
+
+  border:1px solid #8ed1a8;
+
+  color:#145c32;
+
+  padding:18px;
+
+  border-radius:12px;
+
+  margin-bottom:25px;
+
+  text-align:center;
+
+  font-weight:600;
+}
+
+/* ===============================
+Responsive
+================================ */
+
+@media(max-width:768px){
+
+.card-header{
+
+flex-direction:column;
+
+align-items:flex-start;
+
+gap:15px;
+
+}
+
+.content{
+
+padding:20px;
+
+}
+
+.header{
+
+padding:30px 20px;
+
+}
+
+.header h1{
+
+font-size:28px;
+
+}
+
+}
