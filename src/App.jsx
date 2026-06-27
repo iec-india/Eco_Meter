@@ -1,5 +1,6 @@
 ﻿import React, { useState, useEffect } from 'react';
 import './App.css';
+import { supabase, SUPABASE_TABLE } from './config/supabaseClient';
 
 // Eco-Meter 10 Criteria and their specific level statements
 const criteriaData = [
@@ -129,6 +130,8 @@ function App() {
   );
   
   const [isSubmitted, setIsSubmitted] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [submitMessage, setSubmitMessage] = useState({ type: '', text: '' });
 
   // 1. Fetch School List from Google Sheets
   useEffect(() => {
@@ -190,7 +193,7 @@ function App() {
     setIsSubmitted(false);
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     const indianMobileRegex = /^[6-9]\d{9}$/;
 
@@ -208,8 +211,10 @@ function App() {
       alert("Please enter a valid 10-digit mobile number starting with 6, 7, 8, or 9.");
       return;
     }
+
+    setIsSubmitting(true);
+    setSubmitMessage({ type: '', text: '' });
     
-    // Compile all fields into finalData
     const finalData = {
       schoolInfo: {
         schoolName,
@@ -224,9 +229,45 @@ function App() {
         statement: c.levels[scores[c.id]]
       }))
     };
+
+    const payload = {
+      school_name: schoolName,
+      role,
+      evaluator_name: evaluatorName,
+      evaluation_date: evaluationDate,
+      contact_number: contactNumber,
+      state: selectedState,
+      district: selectedDistrict,
+      zone: selectedZone,
+      cluster: selectedCluster,
+      scores: finalData.evaluations
+    };
     
-    console.log("Collected Data:", finalData);
-    setIsSubmitted(true);
+    try {
+      const { error } = await supabase.from(SUPABASE_TABLE).insert([payload]);
+
+      if (error) {
+        throw error;
+      }
+
+      console.log("Collected Data:", finalData);
+      setIsSubmitted(true);
+      setSubmitMessage({
+        type: 'success',
+        text: `Saved to Supabase table ${SUPABASE_TABLE}.`
+      });
+    } catch (error) {
+      console.error('Supabase insert error:', error);
+      const isRlsError = error?.message?.toLowerCase().includes('row-level security');
+      setSubmitMessage({
+        type: 'error',
+        text: isRlsError
+          ? 'Insert blocked by Supabase RLS. Enable an INSERT policy for public.eco_evaluations in your Supabase dashboard.'
+          : error?.message || 'Unable to save to Supabase. Check the table name and RLS policy.'
+      });
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   return (
@@ -509,16 +550,16 @@ function App() {
               </div>
             </section>
 
-            {/* Success Message */}
-            {isSubmitted && (
-              <div className="success">
-                Evaluation Data for "{schoolName}" has been successfully saved! Check browser console.
+            {/* Success / Error Message */}
+            {submitMessage.text && (
+              <div className={submitMessage.type === 'error' ? 'error-message' : 'success'}>
+                {submitMessage.text}
               </div>
             )}
 
             {/* Submit Button */}
-            <button type="submit" className="btn">
-              Submit
+            <button type="submit" className="btn" disabled={isSubmitting}>
+              {isSubmitting ? 'Saving...' : 'Submit'}
             </button>
 
           </form>
