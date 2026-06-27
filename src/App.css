@@ -235,18 +235,134 @@ Input
 }
 
 /* ===============================
+Jammu & Kashmir Government Theme
+================================ */
+
+.school-info-card{
+  --jk-green:#0b5d3b;
+  --jk-green-light:#eaf6ef;
+  --jk-saffron:#c76a14;
+  --jk-saffron-light:#fff4e4;
+  --jk-navy:#12365a;
+  --jk-navy-light:#edf4fb;
+  --jk-gold:#9c7422;
+  --jk-gold-light:#fff8df;
+  --jk-border:#bfd1c7;
+  border-top:5px solid var(--jk-green);
+  background:
+    linear-gradient(180deg, rgba(234,246,239,.72), rgba(255,255,255,0) 150px),
+    white;
+}
+
+.school-info-card .card-header{
+  border-bottom-color:#d7e3da;
+}
+
+.school-info-card .card-title{
+  color:var(--jk-green);
+}
+
+.school-info-card .step{
+  background:linear-gradient(135deg, var(--jk-green-light), #ffffff);
+  color:var(--jk-green);
+  border:1px solid #b8d7c5;
+}
+
+.school-info-card .form-group label{
+  align-self:flex-start;
+  padding:6px 12px;
+  margin-bottom:10px;
+  border-radius:999px;
+  background:var(--label-bg, var(--jk-green-light));
+  color:var(--label-color, var(--jk-green));
+  border:1px solid var(--label-border, #c7dfd0);
+  font-size:14px;
+  line-height:1;
+  letter-spacing:.01em;
+}
+
+.school-info-card .form-group:nth-child(4n + 1){
+  --label-bg:var(--jk-green-light);
+  --label-color:var(--jk-green);
+  --label-border:#c3decf;
+  --field-bg:linear-gradient(180deg, #f4fbf7, #ffffff);
+  --field-border:#9bc7ad;
+  --field-focus:rgba(11,93,59,.16);
+}
+
+.school-info-card .form-group:nth-child(4n + 2){
+  --label-bg:var(--jk-saffron-light);
+  --label-color:#8d4608;
+  --label-border:#f1c993;
+  --field-bg:linear-gradient(180deg, #fff9f0, #ffffff);
+  --field-border:#dfb071;
+  --field-focus:rgba(199,106,20,.16);
+}
+
+.school-info-card .form-group:nth-child(4n + 3){
+  --label-bg:var(--jk-navy-light);
+  --label-color:var(--jk-navy);
+  --label-border:#c3d6e8;
+  --field-bg:linear-gradient(180deg, #f3f8fd, #ffffff);
+  --field-border:#9cb8d3;
+  --field-focus:rgba(18,54,90,.16);
+}
+
+.school-info-card .form-group:nth-child(4n + 4){
+  --label-bg:var(--jk-gold-light);
+  --label-color:#76510f;
+  --label-border:#ead598;
+  --field-bg:linear-gradient(180deg, #fffbea, #ffffff);
+  --field-border:#d8bd65;
+  --field-focus:rgba(156,116,34,.16);
+}
+
+.school-info-card .form-control{
+  background:var(--field-bg, #fafafa);
+  border:1.5px solid var(--field-border, var(--jk-border));
+  color:#102033;
+  font-weight:500;
+}
+
+.school-info-card select.form-control{
+  cursor:pointer;
+  box-shadow:inset 4px 0 0 var(--field-border, var(--jk-green));
+}
+
+.school-info-card select.form-control option{
+  background:#ffffff;
+  color:#102033;
+}
+
+.school-info-card .form-control:hover{
+  border-color:var(--label-color, var(--jk-green));
+}
+
+.school-info-card .form-control:focus{
+  background:#ffffff;
+  border-color:var(--label-color, var(--jk-green));
+  box-shadow:0 0 0 4px var(--field-focus, rgba(11,93,59,.16));
+}
+
+.school-info-card hr{
+  border-top-color:#d7e3da !important;
+}
+
+/* ===============================
 Criteria Card
 ================================ */
 
 .criteria-card{
 
-  border:1px solid #e6e8eb;
+  border:1px solid #dfe8e3;
 
   border-radius:15px;
 
-  padding:22px;
+  padding:24px;
 
-  background:white;
+  background:
+    linear-gradient(180deg, #f8fcfa 0%, #ffffff 130px),
+    white;
 
   margin-bottom:25px;
 
@@ -260,6 +376,16 @@ Criteria Card
   0 10px 25px rgba(0,0,0,.06);
 }
 
+.criteria-heading{
+  display:block;
+  font-size:22px;
+  margin-bottom:18px;
+  color:#0f5132;
+  font-weight:800;
+  letter-spacing:0.35px;
+  text-transform:uppercase;
+}
+
 /* ===============================
 Option
 ================================ */
@@ -268,42 +394,61 @@ Option
 
   display:flex;
 
-  gap:15px;
+  gap:14px;
 
   align-items:flex-start;
 
-  padding:16px;
+  min-height:150px;
 
-  border-radius:12px;
+  padding:18px;
 
-  border:1px solid #d8dde3;
+  border-radius:14px;
 
-  margin-top:12px;
+  border:1px solid #d9e2dc;
+
+  margin-top:0;
 
   cursor:pointer;
 
   transition:.25s;
+
+  background:linear-gradient(180deg, #ffffff, #f8fbf9);
+
+  box-shadow:0 8px 18px rgba(16,32,51,.04);
+}
+
+.option input{
+  position:absolute;
+  opacity:0;
+  pointer-events:none;
 }
 
 .option:hover{
 
-  background:#f4fbf7;
+  background:linear-gradient(180deg, #f4fbf7, #ffffff);
 
   border-color:#198754;
+
+  transform:translateY(-2px);
 }
 
 .option.selected{
 
   border:2px solid #198754;
 
-  background:#eefaf2;
+  background:
+    linear-gradient(180deg, #ecf8f1, #ffffff);
+
+  box-shadow:0 12px 24px rgba(25,135,84,.12);
 }
 
 .option-circle{
 
-  width:20px;
+  flex:0 0 auto;
 
-  height:20px;
+  width:22px;
+
+  height:22px;
 
   border-radius:50%;
 
@@ -326,6 +471,105 @@ Option
   color:#198754;
 
   margin-bottom:5px;
+}
+
+.statement-options{
+  display:grid;
+  grid-template-columns:repeat(2,minmax(0,1fr));
+  gap:16px;
+  border:0;
+  padding:0;
+  margin:0;
+}
+
+.statement-option{
+  position:relative;
+  cursor:pointer;
+}
+
+.statement-option .statement-text{
+  display:block;
+  color:#263544;
+  line-height:1.6;
+  white-space:normal;
+  overflow-wrap:anywhere;
+  font-size:15px;
+}
+
+.form-select{
+  width:100%;
+  padding:14px 16px;
+  border-radius:12px;
+  border:1px solid #d5dce3;
+  background:#fafafa;
+  color:#1f2937;
+  font-size:15px;
+  transition:.3s;
+  outline:none;
+}
+
+.form-select:hover{
+  border-color:#198754;
+}
+
+.form-select:focus{
+  background:white;
+  border-color:#198754;
+  box-shadow:0 0 0 4px rgba(25,135,84,.15);
+}
+
+.form-select,
+.form-select option {
+  white-space: pre-line;
+}
+
+.form-select{
+  min-height:80px;
+}
+
+.selected-summary{
+  margin-top:16px;
+  padding:16px;
+  border:1px solid #cdebd6;
+  border-radius:14px;
+  background:#f4fbf6;
+  color:#1f3a26;
+  line-height:1.8;
+  white-space:pre-line;
+  font-size:15px;
+}
+
+.result-grid{
+  display:grid;
+  grid-template-columns:repeat(auto-fit,minmax(260px,1fr));
+  gap:20px;
+}
+
+.result-card{
+  background:#f8fffa;
+  border:1px solid #d5e8d5;
+  border-radius:18px;
+  padding:24px;
+  box-shadow:0 12px 25px rgba(0,0,0,0.04);
+}
+
+.result-heading{
+  font-size:18px;
+  margin-bottom:14px;
+  color:#145c32;
+}
+
+.result-text{
+  margin:0;
+  color:#4b5563;
+  line-height:1.75;
+  font-size:15px;
+}
+
+.card-section-title{
+  margin-bottom:22px;
+  border-bottom:2px solid #e9ecef;
+  padding-bottom:12px;
 }
 
 /* ===============================
@@ -397,32 +641,29 @@ Responsive
 
 @media(max-width:768px){
 
-.card-header{
+  .card-header{
+    flex-direction:column;
+    align-items:flex-start;
+    gap:15px;
+  }
 
-flex-direction:column;
+  .content{
+    padding:20px;
+  }
 
-align-items:flex-start;
+  .header{
+    padding:30px 20px;
+  }
 
-gap:15px;
+  .header h1{
+    font-size:28px;
+  }
 
-}
+  .statement-options{
+    grid-template-columns:1fr;
+  }
 
-.content{
-
-padding:20px;
-
-}
-
-.header{
-
-padding:30px 20px;
-
-}
-
-.header h1{
-
-font-size:28px;
-
-}
-
+  .option{
+    min-height:auto;
+  }
 }
