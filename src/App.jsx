@@ -1,6 +1,9 @@
 ﻿import React, { useState, useEffect } from 'react';
 import './App.css';
 import { supabase, SUPABASE_TABLE } from './config/supabaseClient';
+import dseLogo from './assets/dse.png';
+import iecLogo from './assets/iec.png';
+import jmcLogo from './assets/jmc.png';
 
 // Eco-Meter 10 Criteria and their specific level statements
 const criteriaData = [
@@ -124,10 +127,8 @@ function App() {
   const [schoolName, setSchoolName] = useState('');
   const [role, setRole] = useState('');
 
-  // Initialize scores with Level 1 for all criteria
-  const [scores, setScores] = useState(
-    criteriaData.reduce((acc, curr) => ({ ...acc, [curr.id]: 1 }), {})
-  );
+  // Initialize scores with no default values
+  const [scores, setScores] = useState({});
   
   const [isSubmitted, setIsSubmitted] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -212,6 +213,13 @@ function App() {
       return;
     }
 
+    // Validate that all criteria have been scored
+    const allScored = criteriaData.every(c => scores[c.id] !== undefined);
+    if (!allScored) {
+      alert("Please answer all Specific Criteria Evaluation questions before submitting.");
+      return;
+    }
+
     setIsSubmitting(true);
     setSubmitMessage({ type: '', text: '' });
     
@@ -273,11 +281,26 @@ function App() {
   return (
     <div className="app">
       <div className="container">
-        
-        {/* Header Section */}
-        <header className="header">
-          <h1>Eco-Meter</h1>
-          <p>CLEAN SCHOOLS - HAPPY SCHOOLS</p>
+      
+        {/* Header Section - Banner Style */}
+        <header className="header-banner">
+          <div className="banner-container">
+            <div className="banner-left">
+              <img src={dseLogo} alt="DSE Logo" className="banner-logo" />
+            </div>
+            
+            <div className="banner-center">
+              <h1 className="banner-title">CLEAN SCHOOLS - HAPPY SCHOOLS</h1>
+              <p className="banner-subtitle">Jammu Leads the Way</p>
+            </div>
+            
+            <div className="banner-right">
+              <div className="banner-logos-right">
+                <img src={jmcLogo} alt="JMC Logo" className="banner-logo-right" />
+                <img src={iecLogo} alt="IEC Logo" className="banner-logo-right" />
+              </div>
+            </div>
+          </div>
         </header>
 
         <div className="content">
@@ -293,9 +316,9 @@ function App() {
                 <span className="step">STEP 1 OF 2</span>
               </div>
 
-              <div className="form-grid">
-                <div className="form-group">
-                  <label>State</label>
+              <div className="school-selection-fields">
+                <div className="school-field-item">
+                  <label className="school-field-label">State</label>
                   {isLoadingSchools ? (
                     <p style={{ margin: 0, padding: "14px", color: "#6c757d", fontSize: "14px" }}>
                       Loading school data...
@@ -306,7 +329,7 @@ function App() {
                     </p>
                   ) : (
                     <select
-                      className="form-control"
+                      className="form-control school-select"
                       value={selectedState}
                       onChange={(e) => {
                         setSelectedState(e.target.value);
@@ -321,17 +344,17 @@ function App() {
                       }}
                       required
                     >
-                      <option value="">-- Select State --</option>
+                      <option value="" disabled>-- Select State --</option>
                       {states.map(state => <option key={state} value={state}>{state}</option>)}
                     </select>
                   )}
                 </div>
 
                 {selectedState && (
-                  <div className="form-group">
-                    <label>District</label>
+                  <div className="school-field-item">
+                    <label className="school-field-label">District</label>
                     <select
-                      className="form-control"
+                      className="form-control school-select"
                       value={selectedDistrict}
                       onChange={(e) => {
                         setSelectedDistrict(e.target.value);
@@ -345,17 +368,17 @@ function App() {
                       }}
                       required
                     >
-                      <option value="">-- Select District --</option>
+                      <option value="" disabled>-- Select District --</option>
                       {districts.map(district => <option key={district} value={district}>{district}</option>)}
                     </select>
                   </div>
                 )}
 
                 {selectedDistrict && (
-                  <div className="form-group">
-                    <label>Zone</label>
+                  <div className="school-field-item">
+                    <label className="school-field-label">Zone</label>
                     <select
-                      className="form-control"
+                      className="form-control school-select"
                       value={selectedZone}
                       onChange={(e) => {
                         setSelectedZone(e.target.value);
@@ -368,17 +391,17 @@ function App() {
                       }}
                       required
                     >
-                      <option value="">-- Select Zone --</option>
+                      <option value="" disabled>-- Select Zone --</option>
                       {zones.map(zone => <option key={zone} value={zone}>{zone}</option>)}
                     </select>
                   </div>
                 )}
 
                 {selectedZone && (
-                  <div className="form-group">
-                    <label>Cluster</label>
+                  <div className="school-field-item">
+                    <label className="school-field-label">Cluster</label>
                     <select
-                      className="form-control"
+                      className="form-control school-select"
                       value={selectedCluster}
                       onChange={(e) => {
                         setSelectedCluster(e.target.value);
@@ -390,17 +413,17 @@ function App() {
                       }}
                       required
                     >
-                      <option value="">-- Select Cluster --</option>
+                      <option value="" disabled>-- Select Cluster --</option>
                       {clusters.map(cluster => <option key={cluster} value={cluster}>{cluster}</option>)}
                     </select>
                   </div>
                 )}
 
                 {selectedCluster && (
-                  <div className="form-group">
-                    <label>School Name</label>
+                  <div className="school-field-item">
+                    <label className="school-field-label">School Name</label>
                     <select
-                      className="form-control"
+                      className="form-control school-select"
                       value={schoolName}
                       onChange={(e) => {
                         setSchoolName(e.target.value);
@@ -412,18 +435,18 @@ function App() {
                       required
                       style={{ cursor: 'pointer' }}
                     >
-                      <option value="">-- Select School --</option>
+                      <option value="" disabled>-- Select School --</option>
                       {schoolsForSelection.map((school, index) => <option key={index} value={school}>{school}</option>)}
                     </select>
                   </div>
                 )}
 
                 {schoolName && (
-                  <div className="form-group">
-                    <label htmlFor="role">Role</label>
+                  <div className="school-field-item">
+                    <label htmlFor="role" className="school-field-label">Role</label>
                     <select
                       id="role"
-                      className="form-control"
+                      className="form-control school-select"
                       value={role}
                       onChange={(e) => {
                         setRole(e.target.value);
@@ -434,7 +457,7 @@ function App() {
                       required
                       style={{ cursor: 'pointer' }}
                     >
-                      <option value="">-- Select Role --</option>
+                      <option value="" disabled>-- Select Role --</option>
                       <option value="HOI">HOI</option>
                       <option value="Nodal Teacher">Nodal Teacher</option>
                       <option value="SMC Precedence">SMC Precedence</option>
