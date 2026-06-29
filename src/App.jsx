@@ -129,6 +129,8 @@ function App() {
 
   // Initialize scores with no default values
   const [scores, setScores] = useState({});
+  const [activeCriteriaIndex, setActiveCriteriaIndex] = useState(0);
+  const [showReview, setShowReview] = useState(false);
   
   const [isSubmitted, setIsSubmitted] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -188,10 +190,33 @@ function App() {
   const zones = selectedDistrict && hierarchy[selectedState]?.[selectedDistrict] ? Object.keys(hierarchy[selectedState][selectedDistrict]).sort() : [];
   const clusters = selectedZone && hierarchy[selectedState]?.[selectedDistrict]?.[selectedZone] ? Object.keys(hierarchy[selectedState][selectedDistrict][selectedZone]).sort() : [];
   const schoolsForSelection = selectedCluster && hierarchy[selectedState]?.[selectedDistrict]?.[selectedZone]?.[selectedCluster] ? hierarchy[selectedState][selectedDistrict][selectedZone][selectedCluster].sort() : [];
+  const isContactNumberValid = /^[6-9]\d{9}$/.test(contactNumber.trim());
+  const visibleCriteria = criteriaData.slice(0, isContactNumberValid ? activeCriteriaIndex + 1 : 0);
+  const allCriteriaScored = criteriaData.every(c => scores[c.id] !== undefined);
+  const totalQuestions = 19;
+  const completedQuestions = [
+    selectedState,
+    selectedDistrict,
+    selectedZone,
+    selectedCluster,
+    schoolName,
+    role,
+    evaluatorName.trim(),
+    evaluationDate,
+    isContactNumberValid ? contactNumber : ''
+  ].filter(Boolean).length + Object.keys(scores).length;
+  const currentQuestion = Math.min(completedQuestions + 1, totalQuestions);
+  const progressPercent = Math.min((completedQuestions / totalQuestions) * 100, 100);
 
   const handleScoreChange = (criteriaId, value) => {
     setScores(prev => ({ ...prev, [criteriaId]: parseInt(value) }));
     setIsSubmitted(false);
+
+    const selectedCriteriaIndex = criteriaData.findIndex(c => c.id === criteriaId);
+
+    if (selectedCriteriaIndex === activeCriteriaIndex && selectedCriteriaIndex < criteriaData.length - 1) {
+      setActiveCriteriaIndex(selectedCriteriaIndex + 1);
+    }
   };
 
   const handleSubmit = async (e) => {
@@ -262,7 +287,7 @@ function App() {
       setIsSubmitted(true);
       setSubmitMessage({
         type: 'success',
-        text: `Saved to Supabase table ${SUPABASE_TABLE}.`
+        text: 'Evaluation submitted successfully.\nThank you for completing the Eco Meter assessment.'
       });
     } catch (error) {
       console.error('Supabase insert error:', error);
@@ -280,10 +305,21 @@ function App() {
 
   return (
     <div className="app">
-      <div className="container">
+      {isSubmitting && (
+        <div className="saving-overlay" role="status" aria-live="polite">
+          <div className="saving-popup">
+            <div className="saving-spinner"></div>
+            <h2>Saving...</h2>
+            <p>Please wait while your evaluation is being submitted.</p>
+          </div>
+        </div>
+      )}
+        
+        <div className="container">
+          <div className="container">
       
-        {/* Header Section - Banner Style */}
-        <header className="header-banner">
+            {/* Header Section - Banner Style */}
+            <header className="header-banner">
           <div className="banner-container">
             <div className="banner-left">
               <img src={dseLogo} alt="DSE Logo" className="banner-logo" />
@@ -313,7 +349,7 @@ function App() {
                     Follow the steps to select your school from the list.
                   </p>
                 </div>
-                <span className="step">STEP 1 OF 2</span>
+                <div className="question-progress-widget"></div>
               </div>
 
               <div className="school-selection-fields">
@@ -513,7 +549,12 @@ function App() {
                           className="form-control"
                           type="tel"
                           value={contactNumber}
-                          onChange={(e) => setContactNumber(e.target.value.replace(/\D/g, '').slice(0, 10))}
+                          onChange={(e) => {
+                            setContactNumber(e.target.value.replace(/\D/g, '').slice(0, 10));
+                            setScores({});
+                            setActiveCriteriaIndex(0);
+                            setIsSubmitted(false);
+                          }}
                           placeholder="Enter 10-digit mobile number"
                           inputMode="numeric"
                           pattern="[6-9][0-9]{9}"
@@ -528,62 +569,69 @@ function App() {
               )}
             </section>
 
-            <section className="card">
-              <h2 className="card-title card-section-title">
-                Specific Criteria Evaluation
-              </h2>
+              {isContactNumberValid && (
+                <section className="card">
+                  <h2 className="card-title card-section-title">
+                    Specific Criteria Evaluation
+                  </h2>
 
-              <div className="criteria-list">
-                {criteriaData.map(item => {
-                  const safeId = item.id.replace(/\s+/g, '-').toLowerCase();
+                  <div className="criteria-list">
+                    {visibleCriteria.map((item, index) => {
+                      const safeId = item.id.replace(/\s+/g, '-').toLowerCase();
 
-                  return (
-                    <div key={item.id} className="criteria-card">
-                      <label className="criteria-heading" htmlFor={`${safeId}-select`}>
-                        {item.title}
-                      </label>
-
-                      <fieldset
-                        id={`${safeId}-select`}
-                        className="statement-options"
-                        aria-label={`Select evaluation for ${item.title}`}
-                      >
-                        {Object.entries(item.levels).map(([level, statement]) => (
-                          <label
-                            key={level}
-                            className={`option statement-option ${scores[item.id] === parseInt(level) ? 'selected' : ''}`}
-                          >
-                            <input
-                              type="radio"
-                              name={safeId}
-                              value={level}
-                              checked={scores[item.id] === parseInt(level)}
-                              onChange={(e) => handleScoreChange(item.id, e.target.value)}
-                            />
-                            <span className="option-circle" aria-hidden="true"></span>
-                            <span>
-                              <span className="statement-text">{statement}</span>
-                            </span>
+                      return (
+                        <div key={item.id} className="criteria-card">
+                          <label className="criteria-heading" htmlFor={`${safeId}-select`}>
+                            {index + 1}. {item.title}
                           </label>
-                        ))}
-                      </fieldset>
-                    </div>
-                  );
-                })}
-              </div>
-            </section>
 
-            {/* Success / Error Message */}
-            {submitMessage.text && (
-              <div className={submitMessage.type === 'error' ? 'error-message' : 'success'}>
-                {submitMessage.text}
-              </div>
-            )}
+                          <fieldset
+                            id={`${safeId}-select`}
+                            className="statement-options"
+                            aria-label={`Select evaluation for ${item.title}`}
+                          >
+                            {Object.entries(item.levels).map(([level, statement]) => (
+                              <label
+                                key={level}
+                                className={`option statement-option ${scores[item.id] === parseInt(level) ? 'selected' : ''}`}
+                              >
+                                <input
+                                  type="radio"
+                                  name={safeId}
+                                  value={level}
+                                  checked={scores[item.id] === parseInt(level)}
+                                  onChange={(e) => handleScoreChange(item.id, e.target.value)}
+                                />
+                                <span className="option-circle" aria-hidden="true"></span>
+                                <span>
+                                  <span className="statement-text">{statement}</span>
+                                </span>
+                              </label>
+                            ))}
+                          </fieldset>
+                        </div>
+                      );
+                    })}
+                  </div>
+                </section>
+              )}
 
-            {/* Submit Button */}
-            <button type="submit" className="btn" disabled={isSubmitting}>
-              {isSubmitting ? 'Saving...' : 'Submit'}
-            </button>
+              {submitMessage.text && (
+                <div className={submitMessage.type === 'error' ? 'error-message' : 'success'}>
+                  {submitMessage.text.split('\n').map((line, index) => (
+                    <React.Fragment key={index}>
+                      {line}
+                      {index < submitMessage.text.split('\n').length - 1 && <br />}
+                    </React.Fragment>
+                  ))}
+                </div>
+              )}
+
+              {isContactNumberValid && allCriteriaScored && (
+                <button type="submit" className="btn" disabled={isSubmitting}>
+                  {isSubmitting ? 'Saving...' : 'Submit'}
+                </button>
+              )}
 
           </form>
 
@@ -607,6 +655,7 @@ function App() {
         </div>
       </div>
     </div>
+  </div>
   );
 }
 

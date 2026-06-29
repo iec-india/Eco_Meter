@@ -1,0 +1,233 @@
+/* ... existing code ... */
+.header-banner {
+  background: linear-gradient(135deg, #145c32, #198754);
+  color: white;
+  padding: 20px;
+  text-align: center;
+}
+
+.banner-title {
+  font-size: 32px;
+  font-weight: 700;
+  color: #fff7d6;
+  margin: 0;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.content {
+  padding: 40px;
+  text-align: left;
+}
+
+/* Sticky top progress */
+.progress-panel {
+  position: sticky;
+  top: 0;
+  z-index: 25;
+  background: rgba(255, 255, 255, 0.96);
+  border: 1px solid #dbe7df;
+  border-radius: 16px;
+  padding: 16px;
+  margin-bottom: 20px;
+  backdrop-filter: blur(10px);
+}
+.stepper {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 10px;
+  margin-bottom: 12px;
+}
+.stepper-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: #6b7280;
+  font-weight: 700;
+  font-size: 13px;
+}
+.stepper-dot {
+  width: 28px;
+  height: 28px;
+  border-radius: 999px;
+  border: 2px solid #d1d5db;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+.stepper-item.complete .stepper-dot {
+  background: #198754;
+  border-color: #198754;
+  color: #fff;
+}
+.criteria-progress-head {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 8px;
+  color: #145c32;
+  font-size: 14px;
+}
+.progress-track {
+  width: 100%;
+  height: 10px;
+  background: #e7efe9;
+  border-radius: 999px;
+  overflow: hidden;
+}
+.progress-fill {
+  height: 100%;
+  background: linear-gradient(135deg, #198754, #145c32);
+  transition: width .3s ease;
+}
+.progress-warning {
+  margin-top: 8px;
+  background: #fff8df;
+  border: 1px solid #ead598;
+  color: #8a5a00;
+  border-radius: 10px;
+  padding: 10px 12px;
+  font-size: 14px;
+}
+
+/* Required + validation */
+.required { color: #d92d20; font-weight: 700; }
+.required-note { color: #6b7280; margin: 0 0 16px; font-size: 14px; }
+.required-note span { color: #d92d20; font-weight: 700; }
+.form-control.invalid,
+.school-select.invalid {
+  border-color: #d92d20 !important;
+  box-shadow: 0 0 0 3px rgba(217, 45, 32, 0.12);
+}
+.field-error,
+.error-message {
+  margin-top: 8px;
+  background: #fff1f0;
+  border: 1px solid #ffccc7;
+  color: #b42318;
+  border-radius: 10px;
+  padding: 10px;
+  font-size: 14px;
+  font-weight: 600;
+}
+
+/* Accordion */
+.criteria-accordion { display: flex; flex-direction: column; gap: 12px; }
+.accordion-card { padding: 0; margin-bottom: 0; overflow: hidden; }
+.accordion-header {
+  width: 100%;
+  border: 0;
+  background: transparent;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  text-align: left;
+  padding: 18px;
+  cursor: pointer;
+  color: #0f5132;
+  font-weight: 800;
+}
+.accordion-status {
+  width: 28px;
+  height: 28px;
+  border-radius: 999px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: #eaf8ef;
+  color: #198754;
+}
+.score-pill {
+  margin-left: auto;
+  background: #eaf8ef;
+  border: 1px solid #b8d7c5;
+  color: #145c32;
+  border-radius: 999px;
+  padding: 4px 10px;
+  font-size: 12px;
+  font-weight: 800;
+}
+.accordion-body { padding: 0 18px 18px; }
+.level-label {
+  display: inline-block;
+  margin-bottom: 8px;
+  padding: 4px 8px;
+  border-radius: 999px;
+  font-size: 12px;
+  font-weight: 800;
+  background: #eaf8ef;
+  color: #145c32;
+}
+.option:focus-within {
+  outline: 3px solid rgba(25, 135, 84, 0.24);
+  outline-offset: 3px;
+}
+
+/* Review */
+.review-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: 16px;
+}
+.review-box {
+  background: #f8fcfa;
+  border: 1px solid #dfe8e3;
+  border-radius: 14px;
+  padding: 16px;
+}
+.secondary-btn {
+  background: #f3f4f6;
+  color: #145c32;
+  border: 1px solid #d1d5db;
+}
+
+/* Sticky bottom submit */
+.sticky-submit {
+  position: sticky;
+  bottom: 0;
+  z-index: 25;
+  background: rgba(255,255,255,.96);
+  border: 1px solid #dbe7df;
+  border-radius: 14px;
+  padding: 12px;
+  margin-top: 16px;
+}
+.sticky-progress-text {
+  text-align: center;
+  color: #145c32;
+  font-weight: 800;
+  margin-bottom: 8px;
+}
+
+.fade-in { animation: fadeInUp .25s ease both; }
+@keyframes fadeInUp {
+  from { opacity: 0; transform: translateY(8px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.success {
+  background: #dff6e7;
+  border: 1px solid #8ed1a8;
+  color: #145c32;
+  text-align: center;
+  font-weight: 700;
+  line-height: 1.6;
+}
+
+/* ... existing code ... */
+
+@media (max-width: 768px) {
+  .content { padding: 18px; }
+  .stepper { grid-template-columns: 1fr; }
+  .banner-title {
+    font-size: 20px;
+    white-space: normal;
+    line-height: 1.25;
+  }
+  .sticky-submit {
+    border-radius: 14px 14px 0 0;
+    margin-left: -8px;
+    margin-right: -8px;
+    margin-bottom: -18px;
+  }
+}

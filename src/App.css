@@ -107,7 +107,7 @@ body{
 .banner-title {
   font-size: 32px;
   font-weight: 700;
-  color: #ff1493;
+  color: #ffffff;
   margin: 0;
   white-space: nowrap;
   overflow: hidden;
@@ -146,6 +146,51 @@ body{
 /* ===============================
 School Selection Fields - New Style
 ================================ */
+
+/* ===============================
+Question Progress Widget
+================================ */
+
+.question-progress-widget{
+  min-width:230px;
+  display:flex;
+  flex-direction:column;
+  gap:8px;
+  align-items:stretch;
+}
+
+.question-progress-label{
+  background:#eaf8ef;
+  color:#145c32;
+  border:1px solid #b8d7c5;
+  padding:8px 16px;
+  border-radius:30px;
+  font-weight:800;
+  font-size:14px;
+  text-align:center;
+}
+
+.question-progress-track{
+  width:100%;
+  height:8px;
+  background:#e7efe9;
+  border-radius:999px;
+  overflow:hidden;
+}
+
+.question-progress-fill{
+  height:100%;
+  background:linear-gradient(135deg, #2563eb, #0ea5e9);
+  border-radius:999px;
+  transition:width .3s ease;
+}
+
+@media(max-width:768px){
+  .question-progress-widget{
+    width:100%;
+    min-width:0;
+  }
+}
 
 .school-selection-fields {
   display: grid;
@@ -313,9 +358,7 @@ Grid
   display:grid;
 
   grid-template-columns:
-      repeat(auto-fit,minmax(300px,1fr));
-
-  gap:25px;
+      repeat(3, minmax(0, 1fr));
 }
 
 /* ===============================
@@ -559,7 +602,7 @@ Option
 
   transition:.25s;
 
-  background:linear-gradient(180deg, #ffffff, #f8fbf9);
+  background:#f0fff4;
 
   box-shadow:0 8px 18px rgba(16,32,51,.04);
 }
@@ -570,23 +613,40 @@ Option
   pointer-events:none;
 }
 
+.statement-options .statement-option:nth-child(1){
+  background:linear-gradient(180deg, #f0fff4, #dcfce7);
+  border-color:#bbf7d0;
+}
+
+.statement-options .statement-option:nth-child(2){
+  background:linear-gradient(180deg, #dcfce7, #bbf7d0);
+  border-color:#86efac;
+}
+
+.statement-options .statement-option:nth-child(3){
+  background:linear-gradient(180deg, #bbf7d0, #86efac);
+  border-color:#4ade80;
+}
+
+.statement-options .statement-option:nth-child(4){
+  background:linear-gradient(180deg, #86efac, #22c55e);
+  border-color:#16a34a;
+}
+
 .option:hover{
 
-  background:linear-gradient(180deg, #f4fbf7, #ffffff);
-
-  border-color:#198754;
+  border-color:#0ea5e9;
 
   transform:translateY(-2px);
 }
 
 .option.selected{
 
-  border:2px solid #198754;
+  border:2px solid #2563eb;
 
-  background:
-    linear-gradient(180deg, #ecf8f1, #ffffff);
+  background:linear-gradient(180deg, #dbeafe, #bfdbfe);
 
-  box-shadow:0 12px 24px rgba(25,135,84,.12);
+  box-shadow:0 12px 24px rgba(37,99,235,.22);
 }
 
 .option-circle{
@@ -599,7 +659,7 @@ Option
 
   border-radius:50%;
 
-  border:2px solid #adb5bd;
+  border:2px solid #64748b;
 
   margin-top:2px;
 
@@ -608,16 +668,7 @@ Option
 
 .option.selected .option-circle{
 
-  border:6px solid #198754;
-}
-
-.option-title{
-
-  font-weight:700;
-
-  color:#198754;
-
-  margin-bottom:5px;
+  border:6px solid #2563eb;
 }
 
 .statement-options{
@@ -779,7 +830,9 @@ Success
 
   text-align:center;
 
-  font-weight:600;
+  font-weight:700;
+
+  line-height:1.7;
 }
 
 /* ===============================
