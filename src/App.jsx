@@ -569,7 +569,24 @@ function App() {
               )}
             </section>
 
-              {isContactNumberValid && (
+            {/* Scorecard Section - Light Blue background with boxed school name */}
+            <section className="card scorecard-section">
+              <div className="card-header">
+                <div>
+                  <h2 className="card-title">Scorecard</h2>
+                  <p className="card-subtitle">Overview of selected school</p>
+                </div>
+              </div>
+
+              <div className="scorecard-content">
+                <div className="scorecard-box">
+                  <div className="scorecard-label">Selected School</div>
+                  <div className="scorecard-school-name">{schoolName || 'No school selected'}</div>
+                </div>
+              </div>
+            </section>
+
+            {isContactNumberValid && (
                 <section className="card">
                   <h2 className="card-title card-section-title">
                     Specific Criteria Evaluation
@@ -627,7 +644,7 @@ function App() {
                 </div>
               )}
 
-              {isContactNumberValid && allCriteriaScored && (
+              {isContactNumberValid && allCriteriaScored && !isSubmitted && (
                 <button type="submit" className="btn" disabled={isSubmitting}>
                   {isSubmitting ? 'Saving...' : 'Submit'}
                 </button>
@@ -636,6 +653,77 @@ function App() {
           </form>
 
           {isSubmitted && (
+            <section className="card scorecard-section">
+              <div className="card-header scorecard-header">
+                <div>
+                  <h2 className="card-title">Scorecard</h2>
+                  <p className="card-subtitle">
+                   
+                  </p>
+                </div>
+              </div>
+
+              <div className="school-scorecard">
+                <div className="school-scorecard-info">
+                  <span className="scorecard-label"></span>
+                  <h3 className="scorecard-school-name">{schoolName}</h3>
+
+                  <div className="scorecard-meta">
+
+                  </div>
+                </div>
+
+                <div className="scorecard-total">
+                  <span className="scorecard-label">Total Score</span>
+                  <strong>
+                    {criteriaData.reduce((sum, item) => sum + (scores[item.id] || 0), 0)}
+                  </strong>
+                  <span>out of {criteriaData.length * 4}</span>
+                </div>
+
+                <div className="scorecard-progress">
+                  <div className="scorecard-progress-head">
+                    <span>Overall Performance</span>
+                    <strong>
+                      {Math.round(
+                        (criteriaData.reduce((sum, item) => sum + (scores[item.id] || 0), 0) /
+                          (criteriaData.length * 4)) *
+                          100
+                      )}
+                      %
+                    </strong>
+                  </div>
+                  <div className="scorecard-progress-track">
+                    <div
+                      className="scorecard-progress-fill"
+                      style={{
+                        width: `${Math.round(
+                          (criteriaData.reduce((sum, item) => sum + (scores[item.id] || 0), 0) /
+                            (criteriaData.length * 4)) *
+                            100
+                        )}%`
+                      }}
+                    ></div>
+                  </div>
+                </div>
+              </div>
+
+              <div className="result-grid">
+                {criteriaData.map(item => (
+                  <article key={item.id} className="result-card">
+                    <div className="result-card-head">
+                      <h3 className="result-heading">{item.title}</h3>
+                      <span className="result-score-badge">
+                        {scores[item.id]}/4
+                      </span>
+                    </div>
+                    <p className="result-text">{item.levels[scores[item.id]]}</p>
+                  </article>
+                ))}
+              </div>
+            </section>
+          )}
+
             <section className="card">
               <div className="card-header">
                 <h2 className="card-title">Aspect-wise Output</h2>
@@ -650,7 +738,7 @@ function App() {
                 ))}
               </div>
             </section>
-          )}
+          )
 
         </div>
       </div>
