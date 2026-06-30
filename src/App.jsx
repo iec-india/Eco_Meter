@@ -1,9 +1,11 @@
-﻿import React, { useState, useEffect } from 'react';
+﻿import React, { useState, useEffect, useRef } from 'react';
 import './App.css';
 import { supabase, SUPABASE_TABLE } from './config/supabaseClient';
 import dseLogo from './assets/dse.png';
 import iecLogo from './assets/iec.png';
 import jmcLogo from './assets/jmc.png';
+import jsPDF from 'jspdf';
+import html2canvas from 'html2canvas';
 
 // Eco-Meter 10 Criteria and their specific level statements
 const criteriaData = [
@@ -131,6 +133,7 @@ function App() {
   const [scores, setScores] = useState({});
   const [activeCriteriaIndex, setActiveCriteriaIndex] = useState(0);
   const [showReview, setShowReview] = useState(false);
+  const scorecardRef = useRef(null);
   
   const [isSubmitted, setIsSubmitted] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -138,7 +141,7 @@ function App() {
 
   // 1. Fetch School List from Google Sheets
   useEffect(() => {
-    // âš ï¸ REPLACE THIS URL WITH YOUR GOOGLE APPS SCRIPT WEB APP URL
+    // REPLACE THIS URL WITH YOUR GOOGLE APPS SCRIPT WEB APP URL
     const scriptUrl = "https://script.google.com/macros/s/AKfycbwm5vTN_1K7EsC7Vr9nWH3RrT1tEXwRitKccKVvB-1x6JI3VzSobOh7q4sh_7GQCXP7/exec";
 
     fetch(scriptUrl)
@@ -191,22 +194,6 @@ function App() {
   const clusters = selectedZone && hierarchy[selectedState]?.[selectedDistrict]?.[selectedZone] ? Object.keys(hierarchy[selectedState][selectedDistrict][selectedZone]).sort() : [];
   const schoolsForSelection = selectedCluster && hierarchy[selectedState]?.[selectedDistrict]?.[selectedZone]?.[selectedCluster] ? hierarchy[selectedState][selectedDistrict][selectedZone][selectedCluster].sort() : [];
   const isContactNumberValid = /^[6-9]\d{9}$/.test(contactNumber.trim());
-  const visibleCriteria = criteriaData.slice(0, isContactNumberValid ? activeCriteriaIndex + 1 : 0);
-  const allCriteriaScored = criteriaData.every(c => scores[c.id] !== undefined);
-  const totalQuestions = 19;
-  const completedQuestions = [
-    selectedState,
-    selectedDistrict,
-    selectedZone,
-    selectedCluster,
-    schoolName,
-    role,
-    evaluatorName.trim(),
-    evaluationDate,
-    isContactNumberValid ? contactNumber : ''
-  ].filter(Boolean).length + Object.keys(scores).length;
-  const currentQuestion = Math.min(completedQuestions + 1, totalQuestions);
-  const progressPercent = Math.min((completedQuestions / totalQuestions) * 100, 100);
 
   const gradeMap = {
     1: 'B',
@@ -225,6 +212,42 @@ function App() {
 
     if (selectedCriteriaIndex === activeCriteriaIndex && selectedCriteriaIndex < criteriaData.length - 1) {
       setActiveCriteriaIndex(selectedCriteriaIndex + 1);
+    }
+  };
+
+  const handlePreviousCriteria = () => {
+    if (activeCriteriaIndex > 0) {
+      setActiveCriteriaIndex(activeCriteriaIndex - 1);
+    }
+  };
+
+  const handleNextCriteria = () => {
+    if (activeCriteriaIndex < criteriaData.length - 1) {
+      setActiveCriteriaIndex(activeCriteriaIndex + 1);
+    }
+  };
+
+  const handleDownloadPdf = async () => {
+    if (!scorecardRef.current) {
+      window.print();
+      return;
+    }
+
+    try {
+      const canvas = await html2canvas(scorecardRef.current, {
+        scale: 2,
+        useCORS: true,
+        backgroundColor: '#ffffff'
+      });
+      const imgData = canvas.toDataURL('image/png');
+      const pdf = new jsPDF('p', 'mm', 'a4');
+      const pdfWidth = pdf.internal.pageSize.getWidth();
+      const pdfHeight = (canvas.height * pdfWidth) / canvas.width;
+      pdf.addImage(imgData, 'PNG', 0, 0, pdfWidth, pdfHeight);
+      pdf.save(`${schoolName ? schoolName.replace(/[^a-zA-Z0-9-_ ]/g, '') : 'scorecard'}-scorecard.pdf`);
+    } catch (error) {
+      console.error('PDF generation failed:', error);
+      window.print();
     }
   };
 
@@ -298,6 +321,8 @@ function App() {
         type: 'success',
         text: 'Evaluation submitted successfully.\nThank you for completing the Eco Meter assessment.'
       });
+      // Scroll to top to see scorecard
+      window.scrollTo(0, 0);
     } catch (error) {
       console.error('Supabase insert error:', error);
       const isRlsError = error?.message?.toLowerCase().includes('row-level security');
@@ -318,17 +343,16 @@ function App() {
         <div className="saving-overlay" role="status" aria-live="polite">
           <div className="saving-popup">
             <div className="saving-spinner"></div>
-            <h2>Saving...</h2>
+            <h2 style={{ color: "#145c32", marginTop: "15px", marginBottom: "10px" }}>Saving...</h2>
             <p>Please wait while your evaluation is being submitted.</p>
           </div>
         </div>
       )}
 
-        <div className="container">
-          <div className="container">
+      <div className="container">
 
-            {/* Header Section - Banner Style */}
-            <header className="header-banner">
+        {/* Header Section - Banner Style */}
+        <header className="header-banner print-hide">
           <div className="banner-container">
             <div className="banner-left">
               <img src={dseLogo} alt="DSE Logo" className="banner-logo" />
@@ -350,254 +374,258 @@ function App() {
 
         <div className="content">
           {!isSubmitted && (
-            <form onSubmit={handleSubmit}>
-            <section className="card school-info-card">
-              <div className="card-header">
-                <div>
-                  <h2 className="card-title">School Selection</h2>
-                  <p className="card-subtitle">
-                    Follow the steps to select your school from the list.
-                  </p>
+            <form onSubmit={handleSubmit} className="print-hide">
+              <section className="card school-info-card">
+                <div className="card-header">
+                  <div>
+                    <h2 className="card-title">School Selection</h2>
+                    <p className="card-subtitle">
+                      Follow the steps to select your school from the list.
+                    </p>
+                  </div>
+                  <div className="question-progress-widget"></div>
                 </div>
-                <div className="question-progress-widget"></div>
-              </div>
 
-              <div className="school-selection-fields">
-                <div className="school-field-item">
-                  <label className="school-field-label">State</label>
-                  {isLoadingSchools ? (
-                    <p style={{ margin: 0, padding: "14px", color: "#6c757d", fontSize: "14px" }}>
-                      Loading school data...
-                    </p>
-                  ) : schoolLoadError ? (
-                    <p style={{ margin: 0, padding: "14px", color: "#c0392b", fontSize: "14px" }}>
-                      {schoolLoadError}
-                    </p>
-                  ) : (
-                    <select
-                      className="form-control school-select"
-                      value={selectedState}
-                      onChange={(e) => {
-                        setSelectedState(e.target.value);
-                        setSelectedDistrict('');
-                        setSelectedZone('');
-                        setSelectedCluster('');
-                        setSchoolName('');
-                        setRole('');
-                        setEvaluatorName('');
-                        setEvaluationDate('');
-                        setContactNumber('');
-                      }}
-                      required
-                    >
-                      <option value="" disabled>-- Select State --</option>
-                      {states.map(state => <option key={state} value={state}>{state}</option>)}
-                    </select>
+                <div className="school-selection-fields">
+                  <div className="school-field-item">
+                    <label className="school-field-label">State</label>
+                    {isLoadingSchools ? (
+                      <p style={{ margin: 0, padding: "14px", color: "#6c757d", fontSize: "14px" }}>
+                        Loading school data...
+                      </p>
+                    ) : schoolLoadError ? (
+                      <p style={{ margin: 0, padding: "14px", color: "#c0392b", fontSize: "14px" }}>
+                        {schoolLoadError}
+                      </p>
+                    ) : (
+                      <select
+                        className="form-control school-select"
+                        value={selectedState}
+                        onChange={(e) => {
+                          setSelectedState(e.target.value);
+                          setSelectedDistrict('');
+                          setSelectedZone('');
+                          setSelectedCluster('');
+                          setSchoolName('');
+                          setRole('');
+                          setEvaluatorName('');
+                          setEvaluationDate('');
+                          setContactNumber('');
+                        }}
+                        required
+                      >
+                        <option value="" disabled>-- Select State --</option>
+                        {states.map(state => <option key={state} value={state}>{state}</option>)}
+                      </select>
+                    )}
+                  </div>
+
+                  {selectedState && (
+                    <div className="school-field-item">
+                      <label className="school-field-label">District</label>
+                      <select
+                        className="form-control school-select"
+                        value={selectedDistrict}
+                        onChange={(e) => {
+                          setSelectedDistrict(e.target.value);
+                          setSelectedZone('');
+                          setSelectedCluster('');
+                          setSchoolName('');
+                          setRole('');
+                          setEvaluatorName('');
+                          setEvaluationDate('');
+                          setContactNumber('');
+                        }}
+                        required
+                      >
+                        <option value="" disabled>-- Select District --</option>
+                        {districts.map(district => <option key={district} value={district}>{district}</option>)}
+                      </select>
+                    </div>
+                  )}
+
+                  {selectedDistrict && (
+                    <div className="school-field-item">
+                      <label className="school-field-label">Zone</label>
+                      <select
+                        className="form-control school-select"
+                        value={selectedZone}
+                        onChange={(e) => {
+                          setSelectedZone(e.target.value);
+                          setSelectedCluster('');
+                          setSchoolName('');
+                          setRole('');
+                          setEvaluatorName('');
+                          setEvaluationDate('');
+                          setContactNumber('');
+                        }}
+                        required
+                      >
+                        <option value="" disabled>-- Select Zone --</option>
+                        {zones.map(zone => <option key={zone} value={zone}>{zone}</option>)}
+                      </select>
+                    </div>
+                  )}
+
+                  {selectedZone && (
+                    <div className="school-field-item">
+                      <label className="school-field-label">Cluster</label>
+                      <select
+                        className="form-control school-select"
+                        value={selectedCluster}
+                        onChange={(e) => {
+                          setSelectedCluster(e.target.value);
+                          setSchoolName('');
+                          setRole('');
+                          setEvaluatorName('');
+                          setEvaluationDate('');
+                          setContactNumber('');
+                        }}
+                        required
+                      >
+                        <option value="" disabled>-- Select Cluster --</option>
+                        {clusters.map(cluster => <option key={cluster} value={cluster}>{cluster}</option>)}
+                      </select>
+                    </div>
+                  )}
+
+                  {selectedCluster && (
+                    <div className="school-field-item">
+                      <label className="school-field-label">School Name</label>
+                      <select
+                        className="form-control school-select"
+                        value={schoolName}
+                        onChange={(e) => {
+                          setSchoolName(e.target.value);
+                          setRole('');
+                          setEvaluatorName('');
+                          setEvaluationDate('');
+                          setContactNumber('');
+                        }}
+                        required
+                        style={{ cursor: 'pointer' }}
+                      >
+                        <option value="" disabled>-- Select School --</option>
+                        {schoolsForSelection.map((school, index) => <option key={index} value={school}>{school}</option>)}
+                      </select>
+                    </div>
+                  )}
+
+                  {schoolName && (
+                    <div className="school-field-item">
+                      <label htmlFor="role" className="school-field-label">Role</label>
+                      <select
+                        id="role"
+                        className="form-control school-select"
+                        value={role}
+                        onChange={(e) => {
+                          setRole(e.target.value);
+                          setEvaluatorName('');
+                          setEvaluationDate('');
+                          setContactNumber('');
+                        }}
+                        required
+                        style={{ cursor: 'pointer' }}
+                      >
+                        <option value="" disabled>-- Select Role --</option>
+                        <option value="HOI">HOI</option>
+                        <option value="Nodal Teacher">Nodal Teacher</option>
+                        <option value="SMC Precedence">SMC Precedence</option>
+                        <option value="Eco Club Member">Eco Club Member</option>
+                        <option value="Local Influencer">Local Influencer</option>
+                        <option value="Other">Other</option>
+                      </select>
+                    </div>
                   )}
                 </div>
 
-                {selectedState && (
-                  <div className="school-field-item">
-                    <label className="school-field-label">District</label>
-                    <select
-                      className="form-control school-select"
-                      value={selectedDistrict}
-                      onChange={(e) => {
-                        setSelectedDistrict(e.target.value);
-                        setSelectedZone('');
-                        setSelectedCluster('');
-                        setSchoolName('');
-                        setRole('');
-                        setEvaluatorName('');
-                        setEvaluationDate('');
-                        setContactNumber('');
-                      }}
-                      required
-                    >
-                      <option value="" disabled>-- Select District --</option>
-                      {districts.map(district => <option key={district} value={district}>{district}</option>)}
-                    </select>
-                  </div>
-                )}
+                {role && (
+                  <>
+                    <hr style={{ border: 'none', borderTop: '1px solid #ececec', margin: '30px 0' }} />
+                    <div className="card-header">
+                      <div>
+                        <h2 className="card-title">Evaluator Details</h2>
+                      </div>
+                    </div>
+                    <div className="form-grid">
+                      <div className="form-group">
+                        <label htmlFor="evaluatorName">Evaluator Name</label>
+                        <input
+                          id="evaluatorName"
+                          className="form-control"
+                          type="text"
+                          value={evaluatorName}
+                          onChange={(e) => setEvaluatorName(e.target.value)}
+                          placeholder="Enter Evaluator Name"
+                          required
+                        />
+                      </div>
 
-                {selectedDistrict && (
-                  <div className="school-field-item">
-                    <label className="school-field-label">Zone</label>
-                    <select
-                      className="form-control school-select"
-                      value={selectedZone}
-                      onChange={(e) => {
-                        setSelectedZone(e.target.value);
-                        setSelectedCluster('');
-                        setSchoolName('');
-                        setRole('');
-                        setEvaluatorName('');
-                        setEvaluationDate('');
-                        setContactNumber('');
-                      }}
-                      required
-                    >
-                      <option value="" disabled>-- Select Zone --</option>
-                      {zones.map(zone => <option key={zone} value={zone}>{zone}</option>)}
-                    </select>
-                  </div>
-                )}
+                      {evaluatorName && evaluatorName.trim() !== '' && (
+                        <div className="form-group">
+                          <label htmlFor="evaluationDate">Evaluation Date</label>
+                          <input
+                            id="evaluationDate"
+                            className="form-control"
+                            type="date"
+                            value={evaluationDate}
+                            onChange={(e) => setEvaluationDate(e.target.value)}
+                            required
+                          />
+                        </div>
+                      )}
 
-                {selectedZone && (
-                  <div className="school-field-item">
-                    <label className="school-field-label">Cluster</label>
-                    <select
-                      className="form-control school-select"
-                      value={selectedCluster}
-                      onChange={(e) => {
-                        setSelectedCluster(e.target.value);
-                        setSchoolName('');
-                        setRole('');
-                        setEvaluatorName('');
-                        setEvaluationDate('');
-                        setContactNumber('');
-                      }}
-                      required
-                    >
-                      <option value="" disabled>-- Select Cluster --</option>
-                      {clusters.map(cluster => <option key={cluster} value={cluster}>{cluster}</option>)}
-                    </select>
-                  </div>
+                      {evaluationDate && (
+                        <div className="form-group">
+                          <label htmlFor="contactNumber">Contact Number</label>
+                          <input
+                            id="contactNumber"
+                            className="form-control"
+                            type="tel"
+                            value={contactNumber}
+                            onChange={(e) => {
+                              setContactNumber(e.target.value.replace(/\D/g, '').slice(0, 10));
+                              setScores({});
+                              setActiveCriteriaIndex(0);
+                              setIsSubmitted(false);
+                            }}
+                            placeholder="Enter 10-digit mobile number"
+                            inputMode="numeric"
+                            pattern="[6-9][0-9]{9}"
+                            maxLength={10}
+                            title="Enter a valid 10-digit Indian mobile number starting with 6, 7, 8, or 9"
+                            required
+                          />
+                        </div>
+                      )}
+                    </div>
+                  </>
                 )}
+              </section>
 
-                {selectedCluster && (
-                  <div className="school-field-item">
-                    <label className="school-field-label">School Name</label>
-                    <select
-                      className="form-control school-select"
-                      value={schoolName}
-                      onChange={(e) => {
-                        setSchoolName(e.target.value);
-                        setRole('');
-                        setEvaluatorName('');
-                        setEvaluationDate('');
-                        setContactNumber('');
-                      }}
-                      required
-                      style={{ cursor: 'pointer' }}
-                    >
-                      <option value="" disabled>-- Select School --</option>
-                      {schoolsForSelection.map((school, index) => <option key={index} value={school}>{school}</option>)}
-                    </select>
-                  </div>
-                )}
-
-                {schoolName && (
-                  <div className="school-field-item">
-                    <label htmlFor="role" className="school-field-label">Role</label>
-                    <select
-                      id="role"
-                      className="form-control school-select"
-                      value={role}
-                      onChange={(e) => {
-                        setRole(e.target.value);
-                        setEvaluatorName('');
-                        setEvaluationDate('');
-                        setContactNumber('');
-                      }}
-                      required
-                      style={{ cursor: 'pointer' }}
-                    >
-                      <option value="" disabled>-- Select Role --</option>
-                      <option value="HOI">HOI</option>
-                      <option value="Nodal Teacher">Nodal Teacher</option>
-                      <option value="SMC Precedence">SMC Precedence</option>
-                      <option value="Eco Club Member">Eco Club Member</option>
-                      <option value="Local Influencer">Local Influencer</option>
-                      <option value="Other">Other</option>
-                    </select>
-                  </div>
-                )}
-              </div>
-
-              {role && (
-                <>
-                  <hr style={{ border: 'none', borderTop: '1px solid #ececec', margin: '30px 0' }} />
+              {isContactNumberValid && (
+                <section className="card">
                   <div className="card-header">
                     <div>
-                      <h2 className="card-title">Evaluator Details</h2>
+                      <h2 className="card-title">Specific Criteria Evaluation</h2>
                     </div>
                   </div>
-                  <div className="form-grid">
-                    <div className="form-group">
-                      <label htmlFor="evaluatorName">Evaluator Name</label>
-                      <input
-                        id="evaluatorName"
-                        className="form-control"
-                        type="text"
-                        value={evaluatorName}
-                        onChange={(e) => setEvaluatorName(e.target.value)}
-                        placeholder="Enter Evaluator Name"
-                        required
-                      />
-                    </div>
 
-                    {evaluatorName && evaluatorName.trim() !== '' && (
-                      <div className="form-group">
-                        <label htmlFor="evaluationDate">Evaluation Date</label>
-                        <input
-                          id="evaluationDate"
-                          className="form-control"
-                          type="date"
-                          value={evaluationDate}
-                          onChange={(e) => setEvaluationDate(e.target.value)}
-                          required
-                        />
-                      </div>
-                    )}
-
-                    {evaluationDate && (
-                      <div className="form-group">
-                        <label htmlFor="contactNumber">Contact Number</label>
-                        <input
-                          id="contactNumber"
-                          className="form-control"
-                          type="tel"
-                          value={contactNumber}
-                          onChange={(e) => {
-                            setContactNumber(e.target.value.replace(/\D/g, '').slice(0, 10));
-                            setScores({});
-                            setActiveCriteriaIndex(0);
-                            setIsSubmitted(false);
-                          }}
-                          placeholder="Enter 10-digit mobile number"
-                          inputMode="numeric"
-                          pattern="[6-9][0-9]{9}"
-                          maxLength={10}
-                          title="Enter a valid 10-digit Indian mobile number starting with 6, 7, 8, or 9"
-                          required
-                        />
-                      </div>
-                    )}
-                  </div>
-                </>
-              )}
-            </section>
-
-            {isContactNumberValid && (
-                <section className="card">
-                  <h2 className="card-title card-section-title">
-                    Specific Criteria Evaluation
-                  </h2>
-
-                  <div className="criteria-list">
-                    {visibleCriteria.map((item, index) => {
+                  <div className="criteria-list-single">
+                    {(() => {
+                      const item = criteriaData[activeCriteriaIndex];
+                      const index = activeCriteriaIndex;
                       const safeId = item.id.replace(/\s+/g, '-').toLowerCase();
 
                       return (
-                        <div key={item.id} className="criteria-card">
+                        <div key={item.id} className="criteria-card-full">
                           <label className="criteria-heading" htmlFor={`${safeId}-select`}>
                             {index + 1}. {item.title}
                           </label>
 
                           <fieldset
                             id={`${safeId}-select`}
-                            className="statement-options"
+                            className="statement-options-full"
                             aria-label={`Select evaluation for ${item.title}`}
                           >
                             {Object.entries(item.levels).map(([level, statement]) => (
@@ -619,9 +647,36 @@ function App() {
                               </label>
                             ))}
                           </fieldset>
+                          
+                          <div style={{ fontSize: '13px', color: '#666', marginTop: '16px', marginBottom: '16px' }}>
+                            Question {activeCriteriaIndex + 1} of {criteriaData.length}
+                          </div>
+
+                          <div className="criteria-navigation">
+                            <button
+                              type="button"
+                              onClick={handlePreviousCriteria}
+                              disabled={activeCriteriaIndex === 0}
+                              className="btn-nav btn-nav-prev"
+                              title="Go to previous question"
+                            >
+                              ← Previous
+                            </button>
+                            {activeCriteriaIndex < criteriaData.length - 1 && (
+                              <button
+                                type="button"
+                                onClick={handleNextCriteria}
+                                disabled={!scores[item.id]}
+                                className="btn-nav btn-nav-next"
+                                title="Go to next question"
+                              >
+                                Next →
+                              </button>
+                            )}
+                          </div>
                         </div>
                       );
-                    })}
+                    })()}
                   </div>
                 </section>
               )}
@@ -637,8 +692,8 @@ function App() {
                 </div>
               )}
 
-              {isContactNumberValid && allCriteriaScored && !isSubmitted && (
-                <button type="submit" className="btn" disabled={isSubmitting}>
+              {isContactNumberValid && (
+                <button type="submit" className="btn print-hide" disabled={isSubmitting}>
                   {isSubmitting ? 'Saving...' : 'Submit'}
                 </button>
               )}
@@ -647,22 +702,43 @@ function App() {
           )}
 
           {isSubmitted && (
-            <section className="card scorecard-section">
+            <section ref={scorecardRef} className="card scorecard-section">
               <div className="scorecard-topbar">
-                <div className="scorecard-topbar-left">
-                  <span className="scorecard-pill">Scorecard</span>
-                  <h2 className="scorecard-title">School Assessment Summary</h2>
+                <div className="scorecard-heading-box">
+                  <h2 className="scorecard-main-title">School Assessment Summary</h2>
                   <p className="scorecard-subtitle">Overview of selected level for each assessment aspect.</p>
-                </div>
-                <div className="scorecard-topbar-right">
-                  <div className="scorecard-school-chip">{schoolName}</div>
-                  <div className="scorecard-status-tag">Submission completed ✔️</div>
                 </div>
               </div>
 
-              <div className="scorecard-table-wrapper">
+              <div className="scorecard-school-download-section">
+                <div className="scorecard-school-info-box">
+                  <span className="school-label">School Name</span>
+                  <span className="school-value">{schoolName}</span>
+                </div>
+                <button onClick={handleDownloadPdf} className="btn-download-pdf print-hide" type="button">
+                  📄 Download PDF
+                </button>
+              </div>
+
+              <div className="scorecard-details-section">
+                <div className="scorecard-detail-item">
+                  <span className="detail-label">Cluster:</span>
+                  <span className="detail-value">{selectedCluster}</span>
+                </div>
+                <div className="scorecard-detail-item">
+                  <span className="detail-label">Zone:</span>
+                  <span className="detail-value">{selectedZone}</span>
+                </div>
+                <div className="scorecard-detail-item">
+                  <span className="detail-label">District:</span>
+                  <span className="detail-value">{selectedDistrict}</span>
+                </div>
+              </div>
+
+              <div className="scorecard-table-section">
+                <h3 className="scorecard-table-heading">Aspect-wise selected grade summary</h3>
+                <div className="scorecard-table-wrapper">
                 <table className="scorecard-table scorecard-four-column">
-                  <caption className="scorecard-table-caption">Aspect-wise selected grade summary</caption>
                   <thead>
                     <tr>
                       <th>Aspect</th>
@@ -686,36 +762,39 @@ function App() {
                           const selectedGrade = getGrade(selectedScore);
 
                           return (
-                            <>
+                            <React.Fragment key={`${item.id}-fragment`}>
                               <td key={`${item.id}-aspect`} className="aspect-cell">{item.title}</td>
                               <td key={`${item.id}-grade`} className="level-cell">
                                 <span className={`selected-grade selected-grade-${selectedScore || 'empty'}`}>
                                   {selectedScore ? selectedGrade : 'N/A'}
                                 </span>
                               </td>
-                            </>
+                            </React.Fragment>
                           );
                         })}
                         {pair.length === 1 && (
-                          <>
+                          <React.Fragment key="empty-pair">
                             <td className="aspect-cell empty-cell"></td>
                             <td className="level-cell"></td>
-                          </>
+                          </React.Fragment>
                         )}
                       </tr>
                     ))}
                   </tbody>
                 </table>
+                </div>
               </div>
 
               <div className="scorecard-chart-section">
                 <div className="scorecard-chart-header">Aspect-wise Level Chart</div>
-                <div className="scorecard-chart-legend">Each bar shows the selected level; darker and taller bars indicate stronger performance.</div>
+                <div className="scorecard-chart-legend">The bars show your performance level from Grade B (Light) to A+ (Dark & Tall).</div>
                 <div className="scorecard-chart">
                   {criteriaData.map((item) => {
                     const selectedScore = scores[item.id] || 0;
                     const selectedGrade = selectedScore ? getGrade(selectedScore) : 'No selection';
+                    // Bar Size Logic (Small to Tall)
                     const barHeight = selectedScore === 1 ? 25 : selectedScore === 2 ? 50 : selectedScore === 3 ? 75 : selectedScore === 4 ? 100 : 8;
+                    
                     return (
                       <div key={item.id} className="chart-bar-column">
                         <div className="chart-bar-wrapper">
@@ -724,6 +803,7 @@ function App() {
                             style={{ height: `${barHeight}%` }}
                             title={selectedGrade}
                             aria-label={selectedGrade}
+                            data-grade={selectedGrade}
                           ></div>
                         </div>
                         <div className="chart-bar-aspect" title={item.title}>{item.title}</div>
@@ -738,7 +818,6 @@ function App() {
         </div>
       </div>
     </div>
-  </div>
   );
 }
 

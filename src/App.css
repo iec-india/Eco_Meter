@@ -22,7 +22,6 @@ body{
 }
 
 /* Main Container */
-
 .app{
   min-height:100vh;
   padding:40px 20px;
@@ -34,47 +33,12 @@ body{
   background:#fff;
   border-radius:20px;
   overflow:hidden;
-  box-shadow:
-      0 12px 30px rgba(0,0,0,.08);
-}
-
-/* ===============================
- Header
-================================ */
-
-.header{
-
-  background:linear-gradient(
-      135deg,
-      #145c32,
-      #198754
-  );
-
-  color:white;
-
-  text-align:center;
-
-  padding:40px;
-}
-
-.header h1{
-
-  font-size:34px;
-
-  margin-bottom:10px;
-}
-
-.header p{
-
-  opacity:.9;
-
-  font-size:17px;
+  box-shadow: 0 12px 30px rgba(0,0,0,.08);
 }
 
 /* ===============================
  Header Banner - New Design
 ================================ */
-
 .header-banner {
   background: linear-gradient(135deg, #145c32, #198754);
   color: white;
@@ -136,115 +100,32 @@ body{
 
 /* Responsive Design */
 @media (max-width: 768px) {
-  .app {
-    padding: 20px 12px;
-  }
-
-  .container {
-    margin: 0 8px;
-    border-radius: 18px;
-    box-shadow: 0 10px 24px rgba(0,0,0,.08);
-  }
-
-  .content {
-    padding: 18px;
-  }
-
-  .banner-container {
-    flex-direction: column;
-    gap: 15px;
-    padding: 15px 0;
-  }
-
-  .banner-title {
-    font-size: 20px;
-    white-space: normal;
-    text-align: center;
-  }
-
-  .banner-subtitle {
-    font-size: 16px;
-  }
-
-  .banner-container {
-    justify-content: center;
-    text-align: center;
-  }
-
-  .banner-logo,
-  .banner-logo-right {
-    height: 55px;
-  }
-
-  .banner-left,
-  .banner-right,
-  .banner-center {
-    width: 100%;
-  }
-
-  .banner-left,
-  .banner-right {
-    display: flex;
-    justify-content: center;
-  }
-
-  .school-selection-fields,
-  .form-grid,
-  .result-grid {
-    display: grid;
-    grid-template-columns: 1fr;
-    gap: 16px;
-  }
-
-  .card-header {
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 12px;
-  }
-
-  .card-header .step {
-    margin-top: 0;
-    align-self: flex-start;
-  }
-
-  .school-field-item,
-  .criteria-card,
-  .scorecard-box,
-  .result-card {
-    min-height: auto;
-    padding: 16px;
-  }
-
-  .school-select,
-  .form-control {
-    min-height: 46px;
-    font-size: 15px;
-    padding: 12px 14px;
-  }
-
-  .statement-options {
-    grid-template-columns: 1fr;
-  }
-
-  .option {
-    min-height: auto;
-    padding: 16px;
-  }
-
-  .scorecard-content {
-    flex-direction: column;
-    gap: 14px;
-  }
-
-  .scorecard-box {
-    width: 100%;
-  }
+  .app { padding: 20px 12px; }
+  .container { margin: 0 8px; border-radius: 18px; box-shadow: 0 10px 24px rgba(0,0,0,.08); }
+  .content { padding: 18px; }
+  .banner-container { flex-direction: column; gap: 15px; padding: 15px 0; justify-content: center; text-align: center; }
+  .banner-title { font-size: 20px; white-space: normal; text-align: center; }
+  .banner-subtitle { font-size: 16px; }
+  .banner-logo, .banner-logo-right { height: 55px; }
+  .banner-left, .banner-right, .banner-center { width: 100%; }
+  .banner-left, .banner-right { display: flex; justify-content: center; }
+  
+  .school-selection-fields, .form-grid, .result-grid { display: grid; grid-template-columns: 1fr; gap: 16px; }
+  .card-header { flex-direction: column; align-items: flex-start; gap: 12px; }
+  .card-header .step { margin-top: 0; align-self: flex-start; }
+  .school-field-item, .criteria-card, .scorecard-box, .result-card { min-height: auto; padding: 16px; }
+  .school-select, .form-control { min-height: 46px; font-size: 15px; padding: 12px 14px; }
+  .statement-options { grid-template-columns: 1fr; }
+  .option { min-height: auto; padding: 16px; }
+  .scorecard-content { flex-direction: column; gap: 14px; }
+  .scorecard-box { width: 100%; }
+  .criteria-list { grid-template-columns: 1fr; }
+  .criteria-card { margin-bottom: 20px; }
 }
 
 /* ===============================
-School Selection Fields - New Style
+School Selection Fields & Options
 ================================ */
-
 .school-selection-fields {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
@@ -258,9 +139,7 @@ School Selection Fields - New Style
   padding: 20px;
   border: 1px solid #dfe8e3;
   border-radius: 15px;
-  background:
-    linear-gradient(180deg, #f8fcfa 0%, #ffffff 130px),
-    white;
+  background: linear-gradient(180deg, #f8fcfa 0%, #ffffff 130px), white;
   box-shadow: 0 8px 18px rgba(16,32,51,.04);
   transition: .25s;
 }
@@ -275,1317 +154,643 @@ School Selection Fields - New Style
   opacity: .75;
 }
 
-.school-field-item:hover {
-  border-color: #0ea5e9;
-  transform: translateY(-2px);
-  box-shadow: 0 10px 25px rgba(0,0,0,.06);
-}
-
-.school-field-item.selected {
-  border: 2px solid #2563eb;
-  background: linear-gradient(180deg, #dbeafe, #ffffff);
-  box-shadow: 0 12px 24px rgba(37,99,235,.16);
-}
-
-.school-field-item.selected::before {
-  background: linear-gradient(180deg, #2563eb, #0ea5e9);
-  opacity: 1;
-}
+.school-field-item:hover { border-color: #0ea5e9; transform: translateY(-2px); box-shadow: 0 10px 25px rgba(0,0,0,.06); }
+.school-field-item.selected { border: 2px solid #2563eb; background: linear-gradient(180deg, #dbeafe, #ffffff); box-shadow: 0 12px 24px rgba(37,99,235,.16); }
+.school-field-item.selected::before { background: linear-gradient(180deg, #2563eb, #0ea5e9); opacity: 1; }
 
 .school-field-label {
-  display: inline-block;
-  margin-bottom: 12px;
-  padding: 5px 10px;
-  border-radius: 999px;
-  background: #eaf8ef;
-  border: 1px solid #b8d7c5;
-  color: #0f5132;
-  font-size: 13px;
-  font-weight: 800;
-  line-height: 1.2;
-  text-transform: uppercase;
-  letter-spacing: .35px;
+  display: inline-block; margin-bottom: 12px; padding: 5px 10px; border-radius: 999px;
+  background: #eaf8ef; border: 1px solid #b8d7c5; color: #0f5132;
+  font-size: 13px; font-weight: 800; line-height: 1.2; text-transform: uppercase; letter-spacing: .35px;
 }
 
-.school-field-item.selected .school-field-label {
-  background: #eaf2ff;
-  border-color: #bfdbfe;
-  color: #1d4ed8;
-}
+.school-field-item.selected .school-field-label { background: #eaf2ff; border-color: #bfdbfe; color: #1d4ed8; }
 
 .school-select {
-  width: 100%;
-  min-height: 48px;
-  padding: 14px 16px;
-  border: 1.5px solid #cbded2;
-  border-radius: 12px;
-  font-size: 16px;
-  font-weight: 600;
-  color: #263544;
-  background-color: #ffffff;
-  cursor: pointer;
-  transition: all 0.2s;
+  width: 100%; min-height: 48px; padding: 14px 16px; border: 1.5px solid #cbded2;
+  border-radius: 12px; font-size: 16px; font-weight: 600; color: #263544;
+  background-color: #ffffff; cursor: pointer; transition: all 0.2s;
 }
 
-.school-select:hover {
-  border-color: #198754;
-  background-color: #f8fffa;
-}
-
-.school-select:focus {
-  outline: none;
-  border-color: #198754;
-  box-shadow: 0 0 0 4px rgba(25, 135, 84, 0.14);
-}
-
-.school-select option {
-  padding: 10px;
-  color: #374151;
-}
-
-.school-select option:disabled {
-  color: #9ca3af;
-  background-color: #f3f4f6;
-}
+.school-select:hover { border-color: #198754; background-color: #f8fffa; }
+.school-select:focus { outline: none; border-color: #198754; box-shadow: 0 0 0 4px rgba(25, 135, 84, 0.14); }
+.school-select option { padding: 10px; color: #374151; }
+.school-select option:disabled { color: #9ca3af; background-color: #f3f4f6; }
 
 /* ===============================
-Question Progress Widget
+Form Area & Basic Cards
 ================================ */
-
-.school-field-item:hover {
-  border-color: #198754;
-  box-shadow: 0 4px 12px rgba(25, 135, 84, 0.1);
-}
-
-.school-field-label {
-  display: block;
-  font-weight: 600;
-  color: #1f2937;
-  font-size: 14px;
-  margin-bottom: 10px;
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
-}
-
-.school-select {
-  width: 100%;
-  min-height: 48px;
-  padding: 12px 14px;
-  border: 2px solid #e5e7eb;
-  border-radius: 8px;
-  font-size: 16px;
-  font-weight: 500;
-  color: #374151;
-  background-color: white;
-  cursor: pointer;
-  transition: all 0.2s;
-}
-
-.school-select:hover {
-  border-color: #198754;
-  background-color: #f0f9ff;
-}
-
-.school-select:focus {
-  outline: none;
-  border-color: #198754;
-  box-shadow: 0 0 0 3px rgba(25, 135, 84, 0.1);
-}
-
-.school-select option {
-  padding: 10px;
-  color: #374151;
-}
-
-.school-select option:disabled {
-  color: #9ca3af;
-  background-color: #f3f4f6;
-}
-
-/* ===============================
-Form Area
-================================ */
-
-.content{
-
-  padding:40px;
-}
-
-/* ===============================
-Card
-================================ */
-
-.card{
-
-  padding: 14px;
-  border-radius: 14px;
-}
-
-/* ===============================
-Card Header
-================================ */
-
+.content{ padding:40px; }
+.card{ padding: 14px; border-radius: 14px; }
 .card-header{
-
-  display:flex;
-
-  justify-content:space-between;
-
-  align-items:center;
-
-  margin-bottom:25px;
-
-  border-bottom:1px solid #ececec;
-
-  padding-bottom:15px;
+  display:flex; justify-content:space-between; align-items:center;
+  margin-bottom:25px; border-bottom:1px solid #ececec; padding-bottom:15px;
 }
+.card-title{ font-size:24px; color:#145c32; font-weight:700; }
+.card-subtitle{ color:#6b7280; margin-top:5px; font-size:15px; }
+.step{ background:#eaf8ef; color:#198754; padding:8px 18px; border-radius:30px; font-weight:600; font-size:14px; }
 
-.card-title{
-
-  font-size:24px;
-
-  color:#145c32;
-
-  font-weight:700;
-}
-
-.card-subtitle{
-
-  color:#6b7280;
-
-  margin-top:5px;
-
-  font-size:15px;
-}
-
-.step{
-
-  background:#eaf8ef;
-
-  color:#198754;
-
-  padding:8px 18px;
-
-  border-radius:30px;
-
-  font-weight:600;
-
-  font-size:14px;
-}
-
-/* ===============================
-Grid
-================================ */
-
-.form-grid{
-
-  display:grid;
-
-  grid-template-columns:
-      repeat(3, minmax(0, 1fr));
-  gap:20px;
-}
-
-/* ===============================
-Form Group
-================================ */
-
-.form-group{
-
-  display:flex;
-
-  flex-direction:column;
-}
-
-.form-group label{
-
-  margin-bottom:8px;
-
-  color:#374151;
-
-  font-weight:600;
-
-  font-size:15px;
-}
-
-/* ===============================
-Input
-================================ */
+.form-grid{ display:grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap:20px; }
+.form-group{ display:flex; flex-direction:column; }
+.form-group label{ margin-bottom:8px; color:#374151; font-weight:600; font-size:15px; }
 
 .form-control{
-
-  width:100%;
-
-  min-height:48px;
-  padding:14px 16px;
-
-  border-radius:12px;
-
-  border:1px solid #d5dce3;
-
-  background:#fafafa;
-
-  font-size:16px;
-
-  transition:.3s;
-
-  outline:none;
+  width:100%; min-height:48px; padding:14px 16px; border-radius:12px; border:1px solid #d5dce3;
+  background:#fafafa; font-size:16px; transition:.3s; outline:none;
 }
+.form-control:hover{ border-color:#198754; }
+.form-control:focus{ background:white; border-color:#198754; box-shadow: 0 0 0 4px rgba(25,135,84,.15); }
 
-.form-control:hover{
-
-  border-color:#198754;
-}
-
-.form-control:focus{
-
-  background:white;
-
-  border-color:#198754;
-
-  box-shadow:
-
-  0 0 0 4px
-
-  rgba(25,135,84,.15);
-}
-
-/* ===============================
-Jammu & Kashmir Government Theme
-================================ */
-
+/* Theme Colors for Details Section */
 .school-info-card{
-  --jk-green:#0b5d3b;
-  --jk-green-light:#eaf6ef;
-  --jk-saffron:#c76a14;
-  --jk-saffron-light:#fff4e4;
-  --jk-navy:#12365a;
-  --jk-navy-light:#edf4fb;
-  --jk-gold:#9c7422;
-  --jk-gold-light:#fff8df;
+  --jk-green:#0b5d3b; --jk-green-light:#eaf6ef;
+  --jk-saffron:#c76a14; --jk-saffron-light:#fff4e4;
+  --jk-navy:#12365a; --jk-navy-light:#edf4fb;
+  --jk-gold:#9c7422; --jk-gold-light:#fff8df;
   --jk-border:#bfd1c7;
   border-top:5px solid var(--jk-green);
-  background:
-    linear-gradient(180deg, rgba(234,246,239,.72), rgba(255,255,255,0) 150px),
-    white;
+  background: linear-gradient(180deg, rgba(234,246,239,.72), rgba(255,255,255,0) 150px), white;
 }
-
-.school-info-card .card-header{
-  border-bottom-color:#d7e3da;
-}
-
-.school-info-card .card-title{
-  color:var(--jk-green);
-}
-
-.school-info-card .step{
-  background:linear-gradient(135deg, var(--jk-green-light), #ffffff);
-  color:var(--jk-green);
-  border:1px solid #b8d7c5;
-}
-
+.school-info-card .card-header{ border-bottom-color:#d7e3da; }
+.school-info-card .card-title{ color:var(--jk-green); }
+.school-info-card .step{ background:linear-gradient(135deg, var(--jk-green-light), #ffffff); color:var(--jk-green); border:1px solid #b8d7c5; }
 .school-info-card .form-group label{
-  align-self:flex-start;
-  padding:6px 12px;
-  margin-bottom:10px;
-  border-radius:999px;
-  background:var(--label-bg, var(--jk-green-light));
-  color:var(--label-color, var(--jk-green));
-  border:1px solid var(--label-border, #c7dfd0);
-  font-size:14px;
-  line-height:1;
-  letter-spacing:.01em;
+  align-self:flex-start; padding:6px 12px; margin-bottom:10px; border-radius:999px;
+  background:var(--label-bg, var(--jk-green-light)); color:var(--label-color, var(--jk-green));
+  border:1px solid var(--label-border, #c7dfd0); font-size:14px; line-height:1; letter-spacing:.01em;
 }
 
-.school-info-card .form-group:nth-child(4n + 1){
-  --label-bg:var(--jk-green-light);
-  --label-color:var(--jk-green);
-  --label-border:#c3decf;
-  --field-bg:linear-gradient(180deg, #f4fbf7, #ffffff);
-  --field-border:#9bc7ad;
-  --field-focus:rgba(11,93,59,.16);
-}
-
-.school-info-card .form-group:nth-child(4n + 2){
-  --label-bg:var(--jk-saffron-light);
-  --label-color:#8d4608;
-  --label-border:#f1c993;
-  --field-bg:linear-gradient(180deg, #fff9f0, #ffffff);
-  --field-border:#dfb071;
-  --field-focus:rgba(199,106,20,.16);
-}
-
-.school-info-card .form-group:nth-child(4n + 3){
-  --label-bg:var(--jk-navy-light);
-  --label-color:var(--jk-navy);
-  --label-border:#c3d6e8;
-  --field-bg:linear-gradient(180deg, #f3f8fd, #ffffff);
-  --field-border:#9cb8d3;
-  --field-focus:rgba(18,54,90,.16);
-}
-
-.school-info-card .form-group:nth-child(4n + 4){
-  --label-bg:var(--jk-gold-light);
-  --label-color:#76510f;
-  --label-border:#ead598;
-  --field-bg:linear-gradient(180deg, #fffbea, #ffffff);
-  --field-border:#d8bd65;
-  --field-focus:rgba(156,116,34,.16);
-}
-
-.school-info-card .form-control{
-  background:var(--field-bg, #fafafa);
-  border:1.5px solid var(--field-border, var(--jk-border));
-  color:#102033;
-  font-weight:500;
-}
-
-.school-info-card select.form-control{
-  cursor:pointer;
-  box-shadow:inset 4px 0 0 var(--field-border, var(--jk-green));
-}
-
-.school-info-card select.form-control option{
-  background:#ffffff;
-  color:#102033;
-}
-
-.school-info-card .form-control:hover{
-  border-color:var(--label-color, var(--jk-green));
-}
-
-.school-info-card .form-control:focus{
-  background:#ffffff;
-  border-color:var(--label-color, var(--jk-green));
-  box-shadow:0 0 0 4px var(--field-focus, rgba(11,93,59,.16));
-}
-
-.school-info-card hr{
-  border-top-color:#d7e3da !important;
-}
+.school-info-card .form-group:nth-child(4n + 1){ --label-bg:var(--jk-green-light); --label-color:var(--jk-green); --label-border:#c3decf; --field-bg:linear-gradient(180deg, #f4fbf7, #ffffff); --field-border:#9bc7ad; --field-focus:rgba(11,93,59,.16); }
+.school-info-card .form-group:nth-child(4n + 2){ --label-bg:var(--jk-saffron-light); --label-color:#8d4608; --label-border:#f1c993; --field-bg:linear-gradient(180deg, #fff9f0, #ffffff); --field-border:#dfb071; --field-focus:rgba(199,106,20,.16); }
+.school-info-card .form-group:nth-child(4n + 3){ --label-bg:var(--jk-navy-light); --label-color:var(--jk-navy); --label-border:#c3d6e8; --field-bg:linear-gradient(180deg, #f3f8fd, #ffffff); --field-border:#9cb8d3; --field-focus:rgba(18,54,90,.16); }
+.school-info-card .form-group:nth-child(4n + 4){ --label-bg:var(--jk-gold-light); --label-color:#76510f; --label-border:#ead598; --field-bg:linear-gradient(180deg, #fffbea, #ffffff); --field-border:#d8bd65; --field-focus:rgba(156,116,34,.16); }
+.school-info-card .form-control{ background:var(--field-bg, #fafafa); border:1.5px solid var(--field-border, var(--jk-border)); color:#102033; font-weight:500; }
+.school-info-card select.form-control{ cursor:pointer; box-shadow:inset 4px 0 0 var(--field-border, var(--jk-green)); }
+.school-info-card select.form-control option{ background:#ffffff; color:#102033; }
+.school-info-card .form-control:hover{ border-color:var(--label-color, var(--jk-green)); }
+.school-info-card .form-control:focus{ background:#ffffff; border-color:var(--label-color, var(--jk-green)); box-shadow:0 0 0 4px var(--field-focus, rgba(11,93,59,.16)); }
+.school-info-card hr{ border-top-color:#d7e3da !important; }
 
 /* ===============================
 Criteria Card
 ================================ */
+.criteria-list{
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 20px;
+}
+
+.criteria-list-single{
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 20px;
+}
 
 .criteria-card{
-
-  border:1px solid #dfe8e3;
-
-  border-radius:15px;
-
-  padding:24px;
-
-  background:
-    linear-gradient(180deg, #f8fcfa 0%, #ffffff 130px),
-    white;
-
-  margin-bottom:25px;
-
+  border:1px solid #dfe8e3; border-radius:15px; padding:24px;
+  background: linear-gradient(180deg, #f8fcfa 0%, #ffffff 130px), white;
   transition:.3s;
 }
+.criteria-card:hover{ box-shadow: 0 10px 25px rgba(0,0,0,.06); }
 
-.criteria-card:hover{
-
-  box-shadow:
-
-  0 10px 25px rgba(0,0,0,.06);
+.criteria-card-full{
+  border:1px solid #dfe8e3; border-radius:15px; padding:24px;
+  background: linear-gradient(180deg, #f8fcfa 0%, #ffffff 130px), white;
+  transition:.3s;
+  width: 100%;
 }
-
-.criteria-heading{
-  display:block;
-  font-size:22px;
-  margin-bottom:18px;
-  color:#0f5132;
-  font-weight:800;
-}
-
-/* ===============================
-Option
-================================ */
+.criteria-card-full:hover{ box-shadow: 0 10px 25px rgba(0,0,0,.06); }
+.criteria-heading{ display:block; font-size:22px; margin-bottom:18px; color:#0f5132; font-weight:800; }
 
 .option{
-
-  display:flex;
-
-  gap:14px;
-
-  align-items:flex-start;
-
-  min-height:150px;
-
-  padding:18px;
-
-  border-radius:14px;
-
-  border:1px solid #d9e2dc;
-
-  margin-top:0;
-
-  cursor:pointer;
-
-  transition:.25s;
-
-  background:#f0fff4;
-
-  box-shadow:0 8px 18px rgba(16,32,51,.04);
-
-  touch-action:manipulation;
+  display:flex; gap:14px; align-items:flex-start; min-height: 120px; padding:18px;
+  border-radius:14px; border:1px solid #d9e2dc; margin-top:0; cursor:pointer;
+  transition:.25s; background:#f0fff4; box-shadow:0 8px 18px rgba(16,32,51,.04); touch-action:manipulation;
 }
+.option input{ position:absolute; opacity:0; pointer-events:none; }
 
-.option input{
-  position:absolute;
-  opacity:0;
-  pointer-events:none;
-}
+.statement-options .statement-option:nth-child(1){ background:linear-gradient(180deg, #f0fff4, #dcfce7); border-color:#bbf7d0; }
+.statement-options .statement-option:nth-child(2){ background:linear-gradient(180deg, #dcfce7, #bbf7d0); border-color:#86efac; }
+.statement-options .statement-option:nth-child(3){ background:linear-gradient(180deg, #bbf7d0, #86efac); border-color:#4ade80; }
+.statement-options .statement-option:nth-child(4){ background:linear-gradient(180deg, #86efac, #22c55e); border-color:#16a34a; }
 
-.statement-options .statement-option:nth-child(1){
-  background:linear-gradient(180deg, #f0fff4, #dcfce7);
-  border-color:#bbf7d0;
-}
+.option:hover{ border-color:#0ea5e9; transform:translateY(-2px); }
+.option.selected{ border:2px solid #2563eb; background:linear-gradient(180deg, #dbeafe, #bfdbfe); box-shadow:0 12px 24px rgba(37,99,235,.22); }
+.option-circle{ flex:0 0 auto; width:24px; height:24px; border-radius:50%; border:2px solid #64748b; margin-top:2px; transition:.25s; }
+.option.selected .option-circle{ border:6px solid #2563eb; }
 
-.statement-options .statement-option:nth-child(2){
-  background:linear-gradient(180deg, #dcfce7, #bbf7d0);
-  border-color:#86efac;
-}
+.statement-options{ display:grid; grid-template-columns: repeat(2, 1fr); gap:16px; border:0; padding:0; margin:0; }
 
-.statement-options .statement-option:nth-child(3){
-  background:linear-gradient(180deg, #bbf7d0, #86efac);
-  border-color:#4ade80;
-}
+.statement-options-full{ display:grid; grid-template-columns: repeat(2, 1fr); gap:16px; border:0; padding:0; margin:0; }
 
-.statement-options .statement-option:nth-child(4){
-  background:linear-gradient(180deg, #86efac, #22c55e);
-  border-color:#16a34a;
-}
+.statement-options-full .statement-option:nth-child(1){ background:linear-gradient(180deg, #f0fff4, #dcfce7); border-color:#bbf7d0; }
+.statement-options-full .statement-option:nth-child(2){ background:linear-gradient(180deg, #dcfce7, #bbf7d0); border-color:#86efac; }
+.statement-options-full .statement-option:nth-child(3){ background:linear-gradient(180deg, #bbf7d0, #86efac); border-color:#4ade80; }
+.statement-options-full .statement-option:nth-child(4){ background:linear-gradient(180deg, #86efac, #22c55e); border-color:#16a34a; }
+.statement-option{ position:relative; cursor:pointer; }
+.statement-option .statement-text{ display:block; color:#263544; line-height:1.6; white-space:normal; overflow-wrap:anywhere; font-size:15px; }
 
-.option:hover{
-
-  border-color:#0ea5e9;
-
-  transform:translateY(-2px);
-}
-
-.option.selected{
-
-  border:2px solid #2563eb;
-
-  background:linear-gradient(180deg, #dbeafe, #bfdbfe);
-
-  box-shadow:0 12px 24px rgba(37,99,235,.22);
-}
-
-.option-circle{
-
-  flex:0 0 auto;
-
-  width:24px;
-
-  height:24px;
-
-  border-radius:50%;
-
-  border:2px solid #64748b;
-
-  margin-top:2px;
-
-  transition:.25s;
-}
-
-.option.selected .option-circle{
-
-  border:6px solid #2563eb;
-}
-
-.statement-options{
-  display:grid;
-  grid-template-columns: 1fr; /* Modified line */
-  gap:16px;
-  border:0;
-  padding:0;
-  margin:0;
-}
-
-.statement-option{
-  position:relative;
-  cursor:pointer;
-}
-
-.statement-option .statement-text{
-  display:block;
-  color:#263544;
-  line-height:1.6;
-  white-space:normal;
-  overflow-wrap:anywhere;
-  font-size:15px;
-}
-
-.form-select{
-  width:100%;
-  padding:14px 16px;
-  border-radius:12px;
-  border:1px solid #d5dce3;
-  background:#fafafa;
-  color:#1f2937;
-  font-size:15px;
-  transition:.3s;
-  outline:none;
-}
-
-.form-select:hover{
-  border-color:#198754;
-}
-
-.form-select:focus{
-  background:white;
-  border-color:#198754;
-  box-shadow:0 0 0 4px rgba(25,135,84,.15);
-}
-
-.form-select,
-.form-select option {
-  white-space: pre-line;
-}
-
-.form-select{
-  min-height:80px;
-}
-
-.selected-summary{
-  margin-top:16px;
-  padding:16px;
-  border:1px solid #cdebd6;
-  border-radius:14px;
-  background:#f4fbf6;
-  color:#1f3a26;
-  line-height:1.8;
-  white-space:pre-line;
-  font-size:15px;
-}
-
+/* ===============================
+Scorecard & Print Options
+================================ */
 .scorecard-section{
   background: linear-gradient(180deg, #e9f7ff 0%, #ffffff 200px);
-  border-radius:16px;
-  padding:20px;
-  margin-bottom:20px;
-  border:1px solid #dbeefc;
+  border-radius:16px; padding:20px; margin-bottom:20px; border:1px solid #dbeefc;
 }
-
-.scorecard-content{
-  display:flex;
-  align-items:center;
-  gap:20px;
-}
-
-.scorecard-box{
-  background:#e6f9ff;
-  border:1px solid #cfeeff;
-  padding:14px 18px;
-  border-radius:12px;
-  min-width:220px;
-  box-shadow: 0 6px 18px rgba(6,86,128,0.06);
-}
-
-.scorecard-label{
-  font-size:12px;
-  color:#055160;
-  font-weight:700;
-  text-transform:uppercase;
-  margin-bottom:6px;
-}
-
-.scorecard-school-name{
-  font-size:18px;
-  color:#023047;
-  font-weight:800;
-}
+.scorecard-content{ display:flex; align-items:center; gap:20px; }
+.scorecard-box{ background:#e6f9ff; border:1px solid #cfeeff; padding:14px 18px; border-radius:12px; min-width:220px; box-shadow: 0 6px 18px rgba(6,86,128,0.06); }
+.scorecard-label{ font-size:12px; color:#055160; font-weight:700; text-transform:uppercase; margin-bottom:6px; }
+.scorecard-school-name{ font-size:18px; color:#023047; font-weight:800; }
 
 .scorecard-topbar{
+  display: flex; justify-content: space-between; align-items: center; gap: 20px;
+  padding-bottom: 0; margin-bottom: 24px;
+}
+
+.scorecard-heading-box{
+  background: #000000;
+  color: #ffffff;
+  padding: 24px 28px;
+  border-radius: 14px;
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
+  width: 100%;
+}
+
+.scorecard-main-title{
+  font-size: 28px;
+  color: #ffffff;
+  margin: 0 0 12px;
+  font-weight: 800;
+}
+
+.scorecard-school-download-section{
   display: flex;
-  justify-content: space-between;
   align-items: center;
   gap: 20px;
-  padding-bottom: 20px;
-  border-bottom: 1px solid rgba(34, 108, 179, 0.12);
-  margin-bottom: 22px;
+  margin-bottom: 24px;
+  padding: 0;
 }
 
-.scorecard-topbar-left{
-  min-width: 0;
-}
-
-.scorecard-pill{
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-  padding: 8px 14px;
-  border-radius: 999px;
-  background: rgba(35, 99, 211, 0.12);
-  color: #1f4f8b;
-  font-size: 13px;
-  font-weight: 700;
-  letter-spacing: .04em;
-}
-
-.scorecard-title{
-  font-size: 24px;
-  color: #122f57;
-  margin: 10px 0 6px;
-}
-
-.scorecard-subtitle{
-  color: #415978;
-  font-size: 15px;
-  max-width: 620px;
-}
-
-.scorecard-topbar-right{
-  display: flex;
-  align-items: center;
-  gap: 14px;
-  flex-wrap: wrap;
-  justify-content: flex-end;
-}
-
-.scorecard-school-chip,
-.scorecard-status-tag{
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-  padding: 10px 16px;
-  border-radius: 999px;
-  font-weight: 700;
-  font-size: 14px;
-}
-
-.scorecard-school-chip{
-  background: #eef3ff;
-  color: #1e3a8a;
-  border: 1px solid #c7d2fe;
-}
-
-.scorecard-status-tag{
-  background: #e8fdf5;
-  color: #107158;
-  border: 1px solid #b7f0dc;
-}
-
-.scorecard-table-wrapper{
-  overflow-x: auto;
-}
-
-.scorecard-table{
-  width: 100%;
-  border-collapse: collapse;
-  background: #ffffff;
-  border-radius: 18px;
-  overflow: hidden;
-  min-width: 100%;
-  border: 1px solid #cfddee;
-  box-shadow: 0 12px 28px rgba(33, 80, 150, 0.06);
-}
-
-.scorecard-table-caption{
-  caption-side: top;
-  text-align: left;
-  font-size: 14px;
-  color: #1f4468;
-  font-weight: 700;
-  padding: 18px 20px;
-  background: #f4f8ff;
-}
-
-.scorecard-table thead{
-  border-bottom: 2px solid #c9d7ef;
-}
-
-.scorecard-table th,
-.scorecard-table td{
-  padding: 18px 20px;
-  text-align: left;
-  border-bottom: 1px solid #e6edf8;
-}
-
-.scorecard-table th{
-  background: #eef6ff;
-  color: #1f4468;
-  font-weight: 700;
-  font-size: 15px;
-}
-
-.scorecard-table tbody tr:hover{
-  background: rgba(56, 113, 255, 0.08);
-}
-
-.aspect-cell{
-  font-weight: 700;
-  color: #142d4c;
-}
-
-.level-cell{
-  display: flex;
-  align-items: center;
-}
-
-.graph-cell{
-  display: flex;
-  align-items: center;
-  gap: 12px;
-}
-
-.score-bar-wrapper{
-  flex: 1;
-  height: 10px;
-  border-radius: 999px;
-  background: #e8effa;
-  overflow: hidden;
-}
-
-.score-bar-fill{
-  height: 100%;
-  border-radius: 999px;
-  background: linear-gradient(90deg, #4f7cff 0%, #83b9ff 100%);
-}
-
-.graph-label{
-  color: #304b71;
-  font-size: 13px;
-  font-weight: 700;
-  min-width: 42px;
-  text-align: right;
-}
-
-.selected-grade{
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  min-width: 68px;
-  min-height: 38px;
-  padding: 0 14px;
-  border-radius: 999px;
-  font-size: 14px;
-  font-weight: 700;
-  letter-spacing: 0.02em;
-  background: #eef4ff;
-  color: #1d4ed8;
-}
-
-.selected-grade-empty {
-  background: #f3f4f6;
-  color: #6b7280;
-}
-
-.selected-grade-1{ background: #dbeeff; color: #0f3b75; }
-.selected-grade-2{ background: #aac8ff; color: #0f356b; }
-.selected-grade-3{ background: #6b92f6; color: #0a2f62; }
-.selected-grade-4{ background: #173f8a; color: #ffffff; }
-
-.level-description{
-  display: none;
-}
-
-.selected-row{
-  background: rgba(47, 78, 136, 0.04);
-}
-
-.scorecard-chart-section{
-  margin-top: 28px;
-  padding: 24px;
-  background: linear-gradient(180deg, #f7faff 0%, #edf4ff 100%);
-  border: 1px solid #d5e2f3;
-  border-radius: 18px;
-}
-
-.scorecard-chart-header{
-  font-size: 18px;
-  font-weight: 700;
-  color: #15355f;
-  margin-bottom: 8px;
-}
-
-.scorecard-chart-legend{
-  font-size: 14px;
-  color: #3f5674;
-  margin-bottom: 18px;
-}
-
-.scorecard-chart{
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(70px, 1fr));
-  gap: 14px;
-  align-items: end;
-  justify-items: center;
-}
-
-.chart-bars-area{
-  display: none;
-}
-
-.chart-bar-column{
+.scorecard-school-info-box{
   display: flex;
   flex-direction: column;
-  align-items: center;
-  gap: 10px;
-  min-width: 0;
+  gap: 8px;
+  padding: 16px 20px;
+  background: #ffffff;
+  border: 2px solid #374151;
+  border-radius: 10px;
+  flex: 1;
+  min-width: 250px;
 }
 
-.chart-bar-wrapper{
-  position: relative;
-  width: 100%;
-  min-height: 180px;
-  background: linear-gradient(180deg, #f8fafc 0%, #e8eef7 100%);
-  border: 1px solid #d8e2ee;
-  border-radius: 18px;
-  padding: 8px 0 0;
+.school-label{
+  font-size: 12px;
+  font-weight: 700;
+  color: #6b7280;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.school-value{
+  font-size: 16px;
+  font-weight: 700;
+  color: #1f2937;
+}
+
+.scorecard-details-section{
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 16px;
+  margin-bottom: 24px;
+}
+
+.scorecard-detail-item{
   display: flex;
-  align-items: flex-end;
-  justify-content: center;
+  align-items: center;
+  gap: 10px;
+  padding: 12px 16px;
+  background: #f3f4f6;
+  border-radius: 8px;
+}
+
+.detail-label{
+  font-weight: 700;
+  color: #374151;
+  font-size: 13px;
+  min-width: fit-content;
+}
+
+.detail-value{
+  color: #1f2937;
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.scorecard-topbar-left{ min-width: 0; }
+.scorecard-pill{
+  display: inline-flex; align-items: center; gap: 8px; padding: 8px 14px;
+  border-radius: 999px; background: rgba(35, 99, 211, 0.12); color: #1f4f8b; font-size: 13px; font-weight: 700; letter-spacing: .04em;
+}
+.scorecard-title{ font-size: 24px; color: #122f57; margin: 10px 0 6px; }
+.scorecard-subtitle{ color: #ffffff; font-size: 15px; max-width: 100%; margin: 0; }
+.scorecard-topbar-right{ display: flex; align-items: center; gap: 14px; flex-wrap: wrap; justify-content: flex-end; }
+.scorecard-school-chip, .scorecard-status-tag{
+  display: inline-flex; align-items: center; gap: 8px; padding: 10px 16px; border-radius: 999px; font-weight: 700; font-size: 14px;
+}
+.scorecard-school-chip{ background: #eef3ff; color: #1e3a8a; border: 1px solid #c7d2fe; }
+.scorecard-status-tag{ background: #e8fdf5; color: #107158; border: 1px solid #b7f0dc; }
+
+/* Print Button Styling */
+.print-btn {
+  background: #0f5132;
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 999px;
+  font-weight: 700;
+  font-size: 14px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  transition: 0.2s;
+  box-shadow: 0 4px 12px rgba(15,81,50,0.2);
+}
+.print-btn:hover { background: #198754; transform: translateY(-2px); }
+
+.scorecard-table-wrapper{ overflow-x: auto; }
+
+.scorecard-table-section{
+  margin-bottom: 30px;
+}
+
+.scorecard-table-heading{
+  font-size: 18px;
+  font-weight: 700;
+  color: #1f2937;
+  margin: 0 0 16px 0;
+  padding: 12px 0;
+  border-bottom: 2px solid #374151;
+}
+
+.scorecard-table{ width: 100%; border-collapse: collapse; background: #ffffff; border-radius: 18px; overflow: hidden; min-width: 100%; border: 2px solid #374151; box-shadow: 0 12px 28px rgba(33, 80, 150, 0.06); }
+.scorecard-table-caption{ caption-side: top; text-align: left; font-size: 14px; color: #1f4468; font-weight: 700; padding: 18px 20px; background: #f4f8ff; }
+.scorecard-table thead{ border-bottom: 2px solid #374151; }
+.scorecard-table th, .scorecard-table td{ padding: 18px 20px; text-align: left; border: 1px solid #374151; }
+.scorecard-table th{ background: #eef6ff; color: #1f2937; font-weight: 700; font-size: 15px; }
+.scorecard-table tbody tr:hover{ background: rgba(56, 113, 255, 0.08); }
+.aspect-cell{ font-weight: 700; color: #142d4c; }
+
+.selected-grade{
+  display: inline-flex; align-items: center; justify-content: center; min-width: 68px; min-height: 38px;
+  padding: 0 14px; border-radius: 999px; font-size: 14px; font-weight: 700; letter-spacing: 0.02em;
+  background: #eef4ff; color: #1d4ed8;
+}
+.selected-grade-empty { background: #f3f4f6; color: #6b7280; }
+.selected-grade-1 { background: #dbeafe; color: #1e40af; }
+.selected-grade-2 { background: #93c5fd; color: #1e40af; }
+.selected-grade-3 { background: #3b82f6; color: #ffffff; }
+.selected-grade-4 { background: #1e40af; color: #ffffff; }
+
+/* ===============================
+Graph / Chart CSS
+================================ */
+.scorecard-chart-section{
+  margin-top: 28px; padding: 24px; background: linear-gradient(180deg, #f7faff 0%, #edf4ff 100%);
+  border: 1px solid #d5e2f3; border-radius: 18px;
+}
+.scorecard-chart-header{ font-size: 18px; font-weight: 700; color: #15355f; margin-bottom: 8px; }
+.scorecard-chart-legend{ font-size: 14px; color: #3f5674; margin-bottom: 18px; }
+
+.scorecard-chart{
+  display: grid; grid-template-columns: repeat(auto-fit, minmax(70px, 1fr));
+  gap: 14px; align-items: end; justify-items: center;
+}
+.chart-bar-column{ display: flex; flex-direction: column; align-items: center; gap: 10px; min-width: 0; width: 100%; }
+
+.chart-bar-wrapper{
+  position: relative; width: 100%; min-height: 180px;
+  background: linear-gradient(180deg, #f8fafc 0%, #e8eef7 100%);
+  border: 1px solid #d8e2ee; border-radius: 18px; padding: 8px 0 0;
+  display: flex; align-items: flex-end; justify-content: center;
   box-shadow: inset 0 1px 3px rgba(15, 23, 42, 0.06);
 }
 
 .chart-bar-fill{
-  position: relative;
-  width: 80%;
-  border-radius: 999px 999px 0 0;
-  cursor: pointer;
+  position: relative; width: 80%; border-radius: 999px 999px 0 0; cursor: pointer;
   transition: transform 0.2s ease, box-shadow 0.2s ease, filter 0.2s ease;
 }
 
+/* Lightest to Darkest Green based on Level */
+.chart-bar-0 { background-color: #e9ecef; } 
+.chart-bar-1 { background-color: #c3e6cb; } 
+.chart-bar-2 { background-color: #75b798; } 
+.chart-bar-3 { background-color: #20c997; } 
+.chart-bar-4 { background-color: #145c32; } 
+
+/* Custom Tooltip */
+.chart-bar-fill::after {
+  content: attr(data-tooltip);
+  position: absolute;
+  top: -40px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: #122f57;
+  color: #fff;
+  padding: 6px 12px;
+  border-radius: 6px;
+  font-size: 13px;
+  font-weight: 600;
+  white-space: nowrap;
+  opacity: 0;
+  visibility: hidden;
+  transition: 0.3s;
+  pointer-events: none;
+  z-index: 10;
+  box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+}
+.chart-bar-fill::before {
+  content: '';
+  position: absolute;
+  top: -10px;
+  left: 50%;
+  transform: translateX(-50%);
+  border-width: 6px;
+  border-style: solid;
+  border-color: #122f57 transparent transparent transparent;
+  opacity: 0;
+  visibility: hidden;
+  transition: 0.3s;
+  pointer-events: none;
+  z-index: 10;
+}
+
+.chart-bar-fill:hover::after,
+.chart-bar-fill:hover::before { opacity: 1; visibility: visible; }
+.chart-bar-fill:hover::after { top: -45px; }
+.chart-bar-fill:hover::before { top: -15px; }
+
+.chart-bar-aspect{ font-size: 12px; color: #122f58; text-align: center; line-height: 1.4; opacity: 0.98; max-width: 100%; font-weight: 700;}
+
+/* ===============================
+Submit Overlay, Buttons
+================================ */
+.saving-overlay {
+  position: fixed; top: 0; left: 0; right: 0; bottom: 0;
+  background: rgba(0,0,0,0.6); display: flex; align-items: center; justify-content: center;
+  z-index: 1000; backdrop-filter: blur(4px);
+}
+.saving-popup { background: white; padding: 40px; border-radius: 20px; text-align: center; box-shadow: 0 10px 40px rgba(0,0,0,0.2); max-width: 90%; }
+.saving-spinner { border: 5px solid #f3f3f3; border-top: 5px solid #198754; border-radius: 50%; width: 50px; height: 50px; animation: spin 1s linear infinite; margin: 0 auto; }
+@keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+
+.btn{
+  position: sticky; bottom: 0; z-index: 20; width:100%; border:none; border-radius:14px;
+  padding:18px; background:linear-gradient(135deg, #198754, #145c32); color:white;
+  font-size:18px; font-weight:700; cursor:pointer; transition:.3s; min-height:56px; margin-top: 20px;
+}
+.btn:hover{ transform:translateY(-2px); box-shadow: 0 12px 25px rgba(25,135,84,.3); }
+
+.success{ background:#dff6e7; border:1px solid #8ed1a8; color:#145c32; padding:18px; border-radius:12px; margin-bottom:25px; text-align:center; font-weight:700; }
+.error-message{ background:#ffebe9; border:1px solid #ffb1ab; color:#d92d20; padding:18px; border-radius:12px; margin-bottom:25px; text-align:center; font-weight:700; }
+
+/* ===============================
+PRINT CSS (PDF Download)
+================================ */
+@media print {
+  @page {
+    size: A4 portrait;
+    margin: 12mm;
+  }
+
+  html, body {
+    background: white !important;
+    color-adjust: exact !important;
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+  }
+
+  body * {
+    visibility: hidden !important;
+  }
+
+  .scorecard-section,
+  .scorecard-section * {
+    visibility: visible !important;
+  }
+
+  .scorecard-section {
+    position: absolute !important;
+    left: 0 !important;
+    top: 0 !important;
+    width: 100% !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    border: none !important;
+    background: white !important;
+    box-shadow: none !important;
+  }
+
+  .print-hide,
+  .header-banner,
+  .btn,
+  .saving-overlay {
+    display: none !important;
+  }
+
+  .btn-download-pdf {
+    display: none !important;
+  }
+
+  .app,
+  .container,
+  .content {
+    box-shadow: none !important;
+    border: none !important;
+    max-width: 100% !important;
+    margin: 0 !important;
+    padding: 0 !important;
+  }
+
+  .scorecard-table {
+    border: 1px solid #ccc !important;
+    page-break-inside: avoid !important;
+  }
+
+  .scorecard-table th,
+  .scorecard-table td {
+    padding: 10px 12px !important;
+    border: 1px solid #ccc !important;
+  }
+
+  .scorecard-topbar {
+    padding-bottom: 0 !important;
+    margin-bottom: 20px !important;
+  }
+
+  .scorecard-heading-box {
+    padding: 20px 24px !important;
+    margin-bottom: 15px !important;
+  }
+
+  .scorecard-main-title {
+    font-size: 24px !important;
+    margin-bottom: 8px !important;
+  }
+
+  .scorecard-school-download-section {
+    margin-bottom: 20px !important;
+    padding: 15px !important;
+    border: 1px solid #ccc !important;
+  }
+
+  .scorecard-school-info-box {
+    padding: 12px 16px !important;
+    border: 1px solid #ccc !important;
+  }
+
+  .scorecard-details-section {
+    margin-bottom: 20px !important;
+  }
+
+  .scorecard-detail-item {
+    padding: 8px 12px !important;
+    border: 1px solid #ccc !important;
+  }
+
+  .scorecard-table-heading {
+    border-bottom: 1px solid #ccc !important;
+    padding: 10px 0 !important;
+    margin-bottom: 12px !important;
+  }
+
+  .scorecard-chart-section {
+    page-break-inside: avoid !important;
+    border: 1px solid #ccc !important;
+  }
+
+  .chart-bar-wrapper,
+  .chart-bar-fill,
+  .selected-grade,
+  .scorecard-table th {
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+  }
+
+  .chart-bar-0 { background: #cbd5e1 !important; }
+  .chart-bar-1 { background: #34d399 !important; }
+  .chart-bar-2 { background: #10b981 !important; }
+  .chart-bar-3 { background: #059669 !important; }
+  .chart-bar-4 { background: #064e3b !important; }
+
+  .chart-bar-fill::before,
+  .chart-bar-fill::after {
+    opacity: 1 !important;
+    transform: translateX(-50%) translateY(0) !important;
+  }
+
+  .chart-bar-fill::before {
+    background: #000 !important;
+    color: #fff !important;
+    border: 1px solid #fff !important;
+  }
+
+  .chart-bar-fill::after {
+    border-top-color: #000 !important;
+  }
+}
+
+/* ===============================
+   Scorecard Download Button
+================================ */
+.btn-download-pdf {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 18px;
+  border-radius: 999px;
+  background: #dc2626; /* Red color to highlight PDF */
+  color: white;
+  font-weight: 700;
+  font-size: 14px;
+  border: none;
+  cursor: pointer;
+  transition: 0.3s ease;
+  box-shadow: 0 4px 12px rgba(220, 38, 38, 0.2);
+}
+
+.btn-download-pdf:hover {
+  background: #b91c1c;
+  transform: translateY(-2px);
+  box-shadow: 0 6px 16px rgba(220, 38, 38, 0.3);
+}
+
+/* ===============================
+   Criteria Navigation Buttons
+================================ */
+.criteria-navigation{
+  display: flex;
+  gap: 12px;
+  margin-top: 20px;
+  padding-top: 16px;
+  border-top: 1px solid #e5e7eb;
+}
+
+.btn-nav{
+  padding: 10px 16px;
+  border: 1.5px solid #d5dce3;
+  background: #ffffff;
+  color: #145c32;
+  border-radius: 10px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.25s;
+}
+
+.btn-nav:hover:not(:disabled){
+  border-color: #145c32;
+  background: #f0fff4;
+  box-shadow: 0 4px 12px rgba(20, 92, 50, 0.15);
+}
+
+.btn-nav:disabled{
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.btn-nav-prev{
+  margin-right: auto;
+}
+
+.btn-nav-next{
+  margin-left: auto;
+}
+
+/* ===============================
+   Chart Bar Colors (Light to Dark)
+================================ */
+/* Replace existing .chart-bar classes with these new green gradient classes */
 .chart-bar-0 {
   background: linear-gradient(180deg, #cbd5e1 0%, #94a3b8 100%);
 }
 
+/* Level 1 (Grade B) - Smallest, Lightest Green */
 .chart-bar-1 {
-  background: linear-gradient(180deg, #60a5fa 0%, #2563eb 100%);
+  background: linear-gradient(180deg, #a7f3d0 0%, #34d399 100%);
 }
 
+/* Level 2 (Grade B+) - Medium Light Green */
 .chart-bar-2 {
-  background: linear-gradient(180deg, #38bdf8 0%, #0284c7 100%);
+  background: linear-gradient(180deg, #34d399 0%, #10b981 100%);
 }
 
+/* Level 3 (Grade A) - Dark Green */
 .chart-bar-3 {
-  background: linear-gradient(180deg, #34d399 0%, #059669 100%);
+  background: linear-gradient(180deg, #10b981 0%, #059669 100%);
 }
 
+/* Level 4 (Grade A+) - Tallest, Darkest Green */
 .chart-bar-4 {
-  background: linear-gradient(180deg, #fbbf24 0%, #d97706 100%);
-}
-
-.chart-bar-fill::before {
-  content: attr(data-grade);
-  position: absolute;
-  left: 50%;
-  top: -42px;
-  transform: translateX(-50%) translateY(6px);
-  min-width: 44px;
-  padding: 7px 10px;
-  border-radius: 999px;
-  background: #0f172a;
-  color: #ffffff;
-  font-size: 12px;
-  font-weight: 800;
-  text-align: center;
-  letter-spacing: 0.04em;
-  opacity: 0;
-  pointer-events: none;
-  box-shadow: 0 10px 22px rgba(15, 23, 42, 0.24);
-  transition: opacity 0.2s ease, transform 0.2s ease;
-  z-index: 5;
-}
-
-.chart-bar-fill::after {
-  content: "";
-  position: absolute;
-  left: 50%;
-  top: -12px;
-  transform: translateX(-50%) translateY(6px);
-  border: 6px solid transparent;
-  border-top-color: #0f172a;
-  opacity: 0;
-  pointer-events: none;
-  transition: opacity 0.2s ease, transform 0.2s ease;
-  z-index: 5;
-}
-
-.chart-bar-fill:hover,
-.chart-bar-fill:focus {
-  transform: translateY(-4px);
-  filter: saturate(1.08);
-  box-shadow: 0 12px 26px rgba(15, 23, 42, 0.18);
-  outline: none;
-}
-
-.chart-bar-fill:hover::before,
-.chart-bar-fill:hover::after,
-.chart-bar-fill:focus::before,
-.chart-bar-fill:focus::after {
-  opacity: 1;
-  transform: translateX(-50%) translateY(0);
-}
-
-.chart-bar-aspect{
-  font-size: 12px;
-  color: #122f58;
-  text-align: center;
-  line-height: 1.4;
-  opacity: 0.98;
-  max-width: 100%;
-}
-
-/* ===============================
-Button
-================================ */
-
-.btn{
-
-  position: sticky;
-  bottom: 0;
-  z-index: 20;
-  width:100%;
-  border:none;
-
-  border-radius:14px;
-
-  padding:18px;
-
-  background:linear-gradient(
-      135deg,
-      #198754,
-      #145c32
-  );
-
-  color:white;
-
-  font-size:18px;
-
-  font-weight:700;
-
-  cursor:pointer;
-
-  transition:.3s;
-  min-height:56px;
-}
-
-.btn:hover{
-
-  transform:translateY(-2px);
-
-  box-shadow:
-
-  0 12px 25px rgba(25,135,84,.3);
-}
-
-/* ===============================
-Success
-================================ */
-
-.success{
-
-  background:#dff6e7;
-
-  border:1px solid #8ed1a8;
-
-  color:#145c32;
-
-  padding:18px;
-
-  border-radius:12px;
-
-  margin-bottom:25px;
-
-  text-align:center;
-
-  font-weight:700;
-
-  line-height:1.7;
-}
-
-/* ===============================
-Responsive
-================================ */
-
-@media(max-width:768px){
-
-  .app{
-    padding:0;
-    background:#ffffff;
-  }
-
-  .container{
-    width:100%;
-    max-width:100%;
-    border-radius:0;
-    box-shadow:none;
-  }
-
-  .header-banner{
-    padding:16px 14px;
-  }
-
-  .banner-container {
-    flex-direction: column;
-    gap: 12px;
-    padding: 0;
-  }
-
-  .banner-left,
-  .banner-right,
-  .banner-center{
-    width:100%;
-  }
-
-  .banner-center{
-    padding:0;
-  }
-
-  .banner-title {
-    font-size:22px;
-    white-space:normal;
-    line-height:1.2;
-  }
-
-  .banner-subtitle {
-    font-size:15px;
-    margin-top:6px;
-  }
-
-  .banner-logo{
-    height:54px;
-  }
-
-  .banner-logo-right {
-    height:44px;
-  }
-
-  .banner-logos-right{
-    gap:14px;
-  }
-
-  .content{
-    padding:16px;
-  }
-
-  .card{
-    padding:18px;
-    border-radius:16px;
-    margin-bottom:18px;
-    box-shadow:0 8px 18px rgba(0,0,0,.04);
-  }
-
-  .card:hover{
-    transform:none;
-  }
-
-  .card-header{
-    flex-direction:column;
-    align-items:flex-start;
-    gap:12px;
-    margin-bottom:18px;
-    padding-bottom:12px;
-  }
-
-  .card-title{
-    font-size:21px;
-    line-height:1.25;
-  }
-
-  .card-subtitle{
-    font-size:14px;
-    line-height:1.5;
-  }
-
-  .step{
-    width:100%;
-    text-align:center;
-  }
-
-  .school-selection-fields{
-    grid-template-columns:1fr;
-    gap:14px;
-  }
-
-  .school-field-item{
-    padding:15px;
-    border-radius:14px;
-  }
-
-  .school-field-item:hover{
-    box-shadow:none;
-  }
-
-  .school-field-label{
-    font-size:13px;
-    line-height:1.35;
-  }
-
-  .form-grid{
-    grid-template-columns:1fr;
-    gap:16px;
-  }
-
-  .form-group label{
-    font-size:14px;
-    line-height:1.4;
-  }
-
-  .form-control,
-  .school-select,
-  .form-select{
-    font-size:16px;
-    min-height:50px;
-    border-radius:12px;
-  }
-
-  .school-info-card .form-group label{
-    line-height:1.2;
-    white-space:normal;
-  }
-
-  .criteria-card{
-    padding:16px;
-    border-radius:16px;
-    margin-bottom:16px;
-  }
-
-  .criteria-heading{
-    font-size:18px;
-    line-height:1.35;
-    margin-bottom:14px;
-  }
-
-  .statement-options{
-    grid-template-columns:1fr;
-    gap:12px;
-  }
-
-  .option{
-    min-height:auto;
-    padding:15px;
-    gap:12px;
-    border-radius:14px;
-  }
-
-  .option:hover{
-    transform:none;
-  }
-
-  .statement-option .statement-text{
-    font-size:14px;
-    line-height:1.55;
-  }
-
-  .option-circle{
-    width:24px;
-    height:24px;
-    margin-top:1px;
-  }
-
-  .selected-summary{
-    padding:14px;
-    font-size:14px;
-  }
-
-  .result-grid{
-    grid-template-columns:1fr;
-    gap:14px;
-  }
-
-  .result-card{
-    padding:18px;
-    border-radius:16px;
-  }
-
-  .result-heading{
-    font-size:17px;
-  }
-
-  .result-text{
-    font-size:14px;
-  }
-
-  .success,
-  .error-message{
-    font-size:14px;
-    line-height:1.55;
-    padding:14px;
-    border-radius:12px;
-  }
-
-  .btn{
-    position:sticky;
-    bottom:0;
-    z-index:20;
-    border-radius:14px 14px 0 0;
-    margin-left:-16px;
-    margin-right:-16px;
-    width:calc(100% + 32px);
-    padding:17px 16px calc(17px + env(safe-area-inset-bottom));
-    box-shadow:0 -10px 24px rgba(0,0,0,.10);
-  }
-
-  .btn:hover{
-    transform:none;
-  }
-}
-
-@media(max-width:420px){
-
-  .header-banner{
-    padding:14px 12px;
-  }
-
-  .banner-title{
-    font-size:19px;
-  }
-
-  .banner-subtitle{
-    font-size:14px;
-  }
-
-  .banner-logo{
-    height:48px;
-  }
-
-  .banner-logo-right{
-    height:38px;
-  }
-
-  .content{
-    padding:12px;
-  }
-
-  .card{
-    padding:15px;
-    border-radius:14px;
-  }
-
-  .card-title{
-    font-size:19px;
-  }
-
-  .school-field-item{
-    padding:13px;
-  }
-
-  .criteria-card{
-    padding:14px;
-  }
-
-  .criteria-heading{
-    font-size:17px;
-  }
-
-  .option{
-    padding:13px;
-  }
-
-  .statement-option .statement-text{
-    font-size:13.5px;
-  }
-
-  .btn{
-    margin-left:-12px;
-    margin-right:-12px;
-    width:calc(100% + 24px);
-  }
+  background: linear-gradient(180deg, #059669 0%, #064e3b 100%);
 }
