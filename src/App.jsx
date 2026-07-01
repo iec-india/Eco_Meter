@@ -203,6 +203,22 @@ function App() {
   };
 
   const getGrade = (score) => score && gradeMap[score] ? gradeMap[score] : '-';
+  const getLevelPercent = (score) => {
+    if (!score) return 0;
+    const numericScore = Math.max(1, Math.min(4, parseInt(score, 10)));
+    return (numericScore / 4) * 100;
+  };
+
+  const scoredCriteria = criteriaData.filter((item) => scores[item.id]);
+  const completedCriteriaCount = scoredCriteria.length;
+  const totalScore = scoredCriteria.reduce((sum, item) => sum + (scores[item.id] || 0), 0);
+  const overallPercentage = criteriaData.length ? Math.round((totalScore / (criteriaData.length * 4)) * 100) : 0;
+  const averageScore = completedCriteriaCount ? (totalScore / completedCriteriaCount).toFixed(1) : '0.0';
+  const overallBand = overallPercentage >= 75 ? 'Excellent' : overallPercentage >= 50 ? 'Strong' : overallPercentage >= 25 ? 'Developing' : 'Needs attention';
+  const highestLevel = scoredCriteria.reduce((best, item) => {
+    const currentScore = scores[item.id];
+    return currentScore > best.score ? { score: currentScore, title: item.title } : best;
+  }, { score: 0, title: 'Awaiting evaluation' });
 
   const handleScoreChange = (criteriaId, value) => {
     setScores(prev => ({ ...prev, [criteriaId]: parseInt(value) }));
@@ -237,13 +253,28 @@ function App() {
       const canvas = await html2canvas(scorecardRef.current, {
         scale: 2,
         useCORS: true,
-        backgroundColor: '#ffffff'
+        backgroundColor: '#ffffff',
+        width: scorecardRef.current.scrollWidth,
+        height: scorecardRef.current.scrollHeight
       });
       const imgData = canvas.toDataURL('image/png');
       const pdf = new jsPDF('p', 'mm', 'a4');
-      const pdfWidth = pdf.internal.pageSize.getWidth();
-      const pdfHeight = (canvas.height * pdfWidth) / canvas.width;
-      pdf.addImage(imgData, 'PNG', 0, 0, pdfWidth, pdfHeight);
+      const pageWidth = pdf.internal.pageSize.getWidth();
+      const pageHeight = pdf.internal.pageSize.getHeight();
+      const margin = 8;
+      const maxWidth = pageWidth - (margin * 2);
+      const maxHeight = pageHeight - (margin * 2);
+
+      let imgWidth = maxWidth;
+      let imgHeight = (canvas.height * imgWidth) / canvas.width;
+
+      if (imgHeight > maxHeight) {
+        const ratio = maxHeight / imgHeight;
+        imgWidth = imgWidth * ratio;
+        imgHeight = maxHeight;
+      }
+
+      pdf.addImage(imgData, 'PNG', margin, margin, imgWidth, imgHeight);
       pdf.save(`${schoolName ? schoolName.replace(/[^a-zA-Z0-9-_ ]/g, '') : 'scorecard'}-scorecard.pdf`);
     } catch (error) {
       console.error('PDF generation failed:', error);
@@ -641,7 +672,8 @@ function App() {
                                   onChange={(e) => handleScoreChange(item.id, e.target.value)}
                                 />
                                 <span className="option-circle" aria-hidden="true"></span>
-                                <span>
+                                <span className="option-content">
+                                  <span className="option-level">Level {level}</span>
                                   <span className="statement-text">{statement}</span>
                                 </span>
                               </label>
@@ -705,111 +737,134 @@ function App() {
             <section ref={scorecardRef} className="card scorecard-section">
               <div className="scorecard-topbar">
                 <div className="scorecard-heading-box">
+                  <div className="scorecard-badge">Eco Meter Report</div>
                   <h2 className="scorecard-main-title">School Assessment Summary</h2>
-                  <p className="scorecard-subtitle">Overview of selected level for each assessment aspect.</p>
+                  <p className="scorecard-subtitle">A polished, professional summary of the selected levels across all assessment aspects.</p>
                 </div>
               </div>
 
               <div className="scorecard-school-download-section">
                 <div className="scorecard-school-info-box">
-                  <span className="school-label">School Name</span>
-                  <span className="school-value">{schoolName}</span>
+                  <div className="school-info-top">
+                    <div className="school-info-icon">🏫</div>
+                    <div>
+                      <span className="school-label">School Name</span>
+                      <span className="school-value">{schoolName}</span>
+                    </div>
+                  </div>
+                  <div className="school-meta-row">
+                    <span className="school-meta-pill"><strong>Cluster:</strong> {selectedCluster}</span>
+                    <span className="school-meta-pill"><strong>Zone:</strong> {selectedZone}</span>
+                    <span className="school-meta-pill"><strong>District:</strong> {selectedDistrict}</span>
+                  </div>
                 </div>
                 <button onClick={handleDownloadPdf} className="btn-download-pdf print-hide" type="button">
-                  📄 Download PDF
+                  📄 Download Report
                 </button>
               </div>
 
-              <div className="scorecard-details-section">
-                <div className="scorecard-detail-item">
-                  <span className="detail-label">Cluster:</span>
-                  <span className="detail-value">{selectedCluster}</span>
+              <div className="scorecard-summary-grid">
+                <div className="summary-card summary-card-primary">
+                  <div className="summary-card-icon">📈</div>
+                  <span className="summary-card-label">Overall Score</span>
+                  <div className="summary-card-value">{overallPercentage}%</div>
+                  <div className="summary-card-meta">{completedCriteriaCount}/{criteriaData.length} aspects completed</div>
+                  <div className="summary-progress">
+                    <div className="summary-progress-bar">
+                      <span style={{ width: `${overallPercentage}%` }} />
+                    </div>
+                  </div>
                 </div>
-                <div className="scorecard-detail-item">
-                  <span className="detail-label">Zone:</span>
-                  <span className="detail-value">{selectedZone}</span>
+                <div className="summary-card summary-card-success">
+                  <div className="summary-card-icon">✅</div>
+                  <span className="summary-card-label">Average Level</span>
+                  <div className="summary-card-value">{averageScore}/4</div>
+                  <div className="summary-card-meta">Performance band: {overallBand}</div>
                 </div>
-                <div className="scorecard-detail-item">
-                  <span className="detail-label">District:</span>
-                  <span className="detail-value">{selectedDistrict}</span>
+                <div className="summary-card summary-card-accent">
+                  <div className="summary-card-icon">🌟</div>
+                  <span className="summary-card-label">Highest Achieved</span>
+                  <div className="summary-card-value">{highestLevel.score ? getGrade(highestLevel.score) : '—'}</div>
+                  <div className="summary-card-meta">{highestLevel.title}</div>
                 </div>
               </div>
 
               <div className="scorecard-table-section">
-                <h3 className="scorecard-table-heading">Aspect-wise selected grade summary</h3>
+                <div className="scorecard-table-header">
+                  <h3 className="scorecard-table-heading">Detailed aspect-wise review</h3>
+                  <span className="scorecard-table-caption">Each row highlights the selected level and the stated standard for that criterion.</span>
+                </div>
                 <div className="scorecard-table-wrapper">
-                <table className="scorecard-table scorecard-four-column">
-                  <thead>
-                    <tr>
-                      <th>Aspect</th>
-                      <th>Selected Level</th>
-                      <th>Aspect</th>
-                      <th>Selected Level</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {criteriaData.reduce((rows, item, index) => {
-                      if (index % 2 === 0) {
-                        rows.push([item]);
-                      } else {
-                        rows[rows.length - 1].push(item);
-                      }
-                      return rows;
-                    }, []).map((pair, rowIndex) => (
-                      <tr key={rowIndex} className={pair.some(item => scores[item.id]) ? 'selected-row' : ''}>
-                        {pair.map((item) => {
-                          const selectedScore = scores[item.id];
-                          const selectedGrade = getGrade(selectedScore);
-
-                          return (
-                            <React.Fragment key={`${item.id}-fragment`}>
-                              <td key={`${item.id}-aspect`} className="aspect-cell">{item.title}</td>
-                              <td key={`${item.id}-grade`} className="level-cell">
-                                <span className={`selected-grade selected-grade-${selectedScore || 'empty'}`}>
-                                  {selectedScore ? selectedGrade : 'N/A'}
-                                </span>
-                              </td>
-                            </React.Fragment>
-                          );
-                        })}
-                        {pair.length === 1 && (
-                          <React.Fragment key="empty-pair">
-                            <td className="aspect-cell empty-cell"></td>
-                            <td className="level-cell"></td>
-                          </React.Fragment>
-                        )}
+                  <table className="scorecard-table">
+                    <thead>
+                      <tr>
+                        <th>Aspect</th>
+                        <th>Selected Level</th>
+                        <th>Review Note</th>
                       </tr>
-                    ))}
-                  </tbody>
-                </table>
+                    </thead>
+                    <tbody>
+                      {criteriaData.map((item) => {
+                        const selectedScore = scores[item.id];
+                        const selectedGrade = getGrade(selectedScore);
+                        const selectedStatement = selectedScore ? item.levels[selectedScore] : 'Awaiting response';
+
+                        return (
+                          <tr key={item.id} className={selectedScore ? 'selected-row' : 'pending-row'}>
+                            <td className="aspect-cell">{item.title}</td>
+                            <td className="level-cell">
+                              <span className={`selected-grade selected-grade-${selectedScore || 'empty'}`}>
+                                {selectedScore ? `${selectedGrade} · L${selectedScore}` : 'Pending'}
+                              </span>
+                            </td>
+                            <td className="statement-cell">
+                              <div className="statement-preview">{selectedStatement}</div>
+                            </td>
+                          </tr>
+                        );
+                      })}
+                    </tbody>
+                  </table>
                 </div>
               </div>
 
               <div className="scorecard-chart-section">
-                <div className="scorecard-chart-header">Aspect-wise Level Chart</div>
-                <div className="scorecard-chart-legend">The bars show your performance level from Grade B (Light) to A+ (Dark & Tall).</div>
+                <div className="scorecard-chart-header">Aspect-wise level chart</div>
+                <div className="scorecard-chart-legend">Bars are scaled from 0–100 and reflect the selected level from Level 1 to Level 4.</div>
                 <div className="scorecard-chart">
-                  {criteriaData.map((item) => {
-                    const selectedScore = scores[item.id] || 0;
-                    const selectedGrade = selectedScore ? getGrade(selectedScore) : 'No selection';
-                    // Bar Size Logic (Small to Tall)
-                    const barHeight = selectedScore === 1 ? 25 : selectedScore === 2 ? 50 : selectedScore === 3 ? 75 : selectedScore === 4 ? 100 : 8;
-                    
-                    return (
-                      <div key={item.id} className="chart-bar-column">
-                        <div className="chart-bar-wrapper">
-                          <div
-                            className={`chart-bar-fill chart-bar-${selectedScore}`}
-                            style={{ height: `${barHeight}%` }}
-                            title={selectedGrade}
-                            aria-label={selectedGrade}
-                            data-grade={selectedGrade}
-                          ></div>
+                  <div className="scorecard-chart-axis" aria-hidden="true">
+                    <span>100</span>
+                    <span>75</span>
+                    <span>50</span>
+                    <span>25</span>
+                    <span>0</span>
+                  </div>
+                  <div className="scorecard-chart-bars">
+                    {criteriaData.map((item) => {
+                      const selectedScore = scores[item.id] || 0;
+                      const selectedGrade = selectedScore ? getGrade(selectedScore) : 'No selection';
+                      const barHeight = getLevelPercent(selectedScore);
+                      const levelText = selectedScore ? `Level ${selectedScore}` : 'Not rated';
+
+                      return (
+                        <div key={item.id} className="chart-bar-column">
+                          <div className="chart-bar-wrapper">
+                            <div
+                              className={`chart-bar-fill chart-bar-${selectedScore}`}
+                              style={{ height: `${selectedScore ? Math.max(barHeight, 12) : 8}%`, minHeight: selectedScore ? '18px' : '8px' }}
+                              title={`${item.title}: ${selectedGrade} (${levelText})`}
+                              aria-label={`${item.title}: ${selectedGrade} (${levelText})`}
+                              data-tooltip={`${item.title}: ${selectedGrade} (${levelText})`}
+                              data-grade={selectedGrade}
+                            ></div>
+                          </div>
+                          <div className="chart-bar-grade">{selectedScore ? `${selectedGrade}` : '—'}</div>
+                          <div className="chart-bar-level">{levelText}</div>
+                          <div className="chart-bar-aspect" title={item.title}>{item.title}</div>
                         </div>
-                        <div className="chart-bar-aspect" title={item.title}>{item.title}</div>
-                      </div>
-                    );
-                  })}
+                      );
+                    })}
+                  </div>
                 </div>
               </div>
             </section>

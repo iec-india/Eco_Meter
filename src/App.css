@@ -121,6 +121,29 @@ body{
   .scorecard-box { width: 100%; }
   .criteria-list { grid-template-columns: 1fr; }
   .criteria-card { margin-bottom: 20px; }
+
+  .scorecard-section { padding: 16px; }
+  .scorecard-heading-box { padding: 20px; }
+  .scorecard-school-download-section { flex-direction: column; align-items: stretch; }
+  .scorecard-school-info-box { min-width: 0; }
+  .scorecard-summary-grid { grid-template-columns: 1fr; }
+  .scorecard-table-header { flex-direction: column; align-items: flex-start; }
+  .scorecard-chart { flex-direction: column; }
+  .scorecard-chart-axis { flex-direction: row; justify-content: space-between; min-width: 0; padding: 0 0 8px; }
+  .scorecard-chart-bars { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; }
+  .chart-bar-wrapper { min-height: 140px; }
+  .chart-bar-aspect { font-size: 11px; }
+  .scorecard-table th, .scorecard-table td { padding: 12px 10px; }
+}
+
+@media (max-width: 480px) {
+  .content { padding: 12px; }
+  .scorecard-main-title { font-size: 22px; }
+  .scorecard-subtitle { font-size: 13px; }
+  .scorecard-chart-bars { grid-template-columns: 1fr; }
+  .scorecard-school-info-box { padding: 14px; }
+  .summary-card { padding: 14px; }
+  .summary-card-value { font-size: 20px; }
 }
 
 /* ===============================
@@ -288,14 +311,20 @@ Criteria Card
 .statement-options-full .statement-option:nth-child(3){ background:linear-gradient(180deg, #bbf7d0, #86efac); border-color:#4ade80; }
 .statement-options-full .statement-option:nth-child(4){ background:linear-gradient(180deg, #86efac, #22c55e); border-color:#16a34a; }
 .statement-option{ position:relative; cursor:pointer; }
+.statement-option .option-content{ display:flex; flex-direction:column; gap:6px; }
+.statement-option .option-level{ display:inline-flex; align-self:flex-start; padding:4px 8px; border-radius:999px; background:rgba(20,92,50,.12); color:#145c32; font-size:12px; font-weight:700; text-transform:uppercase; letter-spacing:.04em; }
 .statement-option .statement-text{ display:block; color:#263544; line-height:1.6; white-space:normal; overflow-wrap:anywhere; font-size:15px; }
 
 /* ===============================
 Scorecard & Print Options
 ================================ */
 .scorecard-section{
-  background: linear-gradient(180deg, #e9f7ff 0%, #ffffff 200px);
-  border-radius:16px; padding:20px; margin-bottom:20px; border:1px solid #dbeefc;
+  background: linear-gradient(135deg, #f5fbff 0%, #ffffff 60%, #f9fff8 100%);
+  border-radius: 20px;
+  padding: 24px;
+  margin-bottom: 24px;
+  border: 1px solid #dcebf5;
+  box-shadow: 0 16px 40px rgba(15, 23, 42, 0.06);
 }
 .scorecard-content{ display:flex; align-items:center; gap:20px; }
 .scorecard-box{ background:#e6f9ff; border:1px solid #cfeeff; padding:14px 18px; border-radius:12px; min-width:220px; box-shadow: 0 6px 18px rgba(6,86,128,0.06); }
@@ -308,18 +337,33 @@ Scorecard & Print Options
 }
 
 .scorecard-heading-box{
-  background: #000000;
+  background: linear-gradient(135deg, #145c32 0%, #0f766e 55%, #2563eb 100%);
   color: #ffffff;
-  padding: 24px 28px;
-  border-radius: 14px;
-  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
+  padding: 26px 30px;
+  border-radius: 18px;
+  box-shadow: 0 12px 30px rgba(15, 118, 110, 0.2);
   width: 100%;
+}
+
+.scorecard-badge{
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 12px;
+  border-radius: 999px;
+  font-size: 12px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  background: rgba(255, 255, 255, 0.16);
+  backdrop-filter: blur(6px);
+  margin-bottom: 10px;
 }
 
 .scorecard-main-title{
   font-size: 28px;
   color: #ffffff;
-  margin: 0 0 12px;
+  margin: 0 0 10px;
   font-weight: 800;
 }
 
@@ -334,28 +378,136 @@ Scorecard & Print Options
 .scorecard-school-info-box{
   display: flex;
   flex-direction: column;
-  gap: 8px;
-  padding: 16px 20px;
-  background: #ffffff;
-  border: 2px solid #374151;
-  border-radius: 10px;
+  gap: 10px;
+  padding: 18px 20px;
+  background: linear-gradient(135deg, #f0f9ff 0%, #ffffff 70%, #f3fff7 100%);
+  border: 1px solid #cfe0f3;
+  border-left: 6px solid #2563eb;
+  border-radius: 18px;
   flex: 1;
   min-width: 250px;
+  box-shadow: 0 12px 28px rgba(37, 99, 235, 0.12);
+}
+
+.school-info-top{
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.school-info-icon{
+  display: grid;
+  place-items: center;
+  width: 46px;
+  height: 46px;
+  border-radius: 14px;
+  background: linear-gradient(135deg, #2563eb 0%, #14b8a6 100%);
+  font-size: 22px;
+  box-shadow: 0 8px 18px rgba(37, 99, 235, 0.18);
 }
 
 .school-label{
+  display: block;
   font-size: 12px;
   font-weight: 700;
-  color: #6b7280;
+  color: #4b5563;
   text-transform: uppercase;
   letter-spacing: 0.05em;
 }
 
 .school-value{
-  font-size: 16px;
-  font-weight: 700;
-  color: #1f2937;
+  display: block;
+  font-size: 18px;
+  font-weight: 800;
+  color: #0f172a;
 }
+
+.school-meta-row{
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  font-size: 13px;
+  color: #475569;
+  margin-top: 2px;
+}
+
+.school-meta-pill{
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 6px 10px;
+  border-radius: 999px;
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
+}
+
+.scorecard-summary-grid{
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 16px;
+  margin-bottom: 24px;
+}
+
+.summary-card{
+  position: relative;
+  padding: 18px;
+  border-radius: 18px;
+  border: 1px solid #e5ecf5;
+  box-shadow: 0 10px 24px rgba(15, 23, 42, 0.06);
+  overflow: hidden;
+}
+
+.summary-card::before {
+  content: "";
+  position: absolute;
+  inset: 0 auto auto 0;
+  width: 100%;
+  height: 4px;
+  background: linear-gradient(90deg, rgba(255,255,255,0.2), transparent);
+}
+
+.summary-card-primary{ background: linear-gradient(135deg, #eff8ff 0%, #ffffff 100%); }
+.summary-card-success{ background: linear-gradient(135deg, #f2fff7 0%, #ffffff 100%); }
+.summary-card-accent{ background: linear-gradient(135deg, #fff8e6 0%, #ffffff 100%); }
+
+.summary-card-icon{
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  border-radius: 12px;
+  margin-bottom: 10px;
+  font-size: 20px;
+  background: rgba(255,255,255,0.7);
+  box-shadow: inset 0 0 0 1px rgba(255,255,255,0.75);
+}
+
+.summary-card-label{
+  display: block;
+  font-size: 12px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: #64748b;
+  margin-bottom: 8px;
+}
+
+.summary-card-value{
+  font-size: 24px;
+  font-weight: 800;
+  color: #0f172a;
+  margin-bottom: 6px;
+}
+
+.summary-card-meta{
+  font-size: 13px;
+  color: #475569;
+}
+
+.summary-progress{ margin-top: 10px; }
+.summary-progress-bar{ width: 100%; height: 8px; border-radius: 999px; background: #e2e8f0; overflow: hidden; }
+.summary-progress-bar span{ display: block; height: 100%; border-radius: inherit; background: linear-gradient(90deg, #22c55e 0%, #145c32 100%); }
 
 .scorecard-details-section{
   display: grid;
@@ -424,26 +576,41 @@ Scorecard & Print Options
   margin-bottom: 30px;
 }
 
-.scorecard-table-heading{
-  font-size: 18px;
-  font-weight: 700;
-  color: #1f2937;
-  margin: 0 0 16px 0;
-  padding: 12px 0;
-  border-bottom: 2px solid #374151;
+.scorecard-table-header{
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  gap: 12px;
+  margin-bottom: 14px;
 }
 
-.scorecard-table{ width: 100%; border-collapse: collapse; background: #ffffff; border-radius: 18px; overflow: hidden; min-width: 100%; border: 2px solid #374151; box-shadow: 0 12px 28px rgba(33, 80, 150, 0.06); }
-.scorecard-table-caption{ caption-side: top; text-align: left; font-size: 14px; color: #1f4468; font-weight: 700; padding: 18px 20px; background: #f4f8ff; }
-.scorecard-table thead{ border-bottom: 2px solid #374151; }
-.scorecard-table th, .scorecard-table td{ padding: 18px 20px; text-align: left; border: 1px solid #374151; }
-.scorecard-table th{ background: #eef6ff; color: #1f2937; font-weight: 700; font-size: 15px; }
-.scorecard-table tbody tr:hover{ background: rgba(56, 113, 255, 0.08); }
+.scorecard-table-heading{
+  font-size: 18px;
+  font-weight: 800;
+  color: #0f172a;
+  margin: 0;
+}
+
+.scorecard-table-caption{
+  font-size: 13px;
+  color: #64748b;
+  font-weight: 600;
+}
+
+.scorecard-table{ width: 100%; border-collapse: collapse; background: #ffffff; border-radius: 18px; overflow: hidden; min-width: 100%; border: 1px solid #e2e8f0; box-shadow: 0 12px 28px rgba(15, 23, 42, 0.06); }
+.scorecard-table thead{ border-bottom: 1px solid #e2e8f0; }
+.scorecard-table th, .scorecard-table td{ padding: 16px 18px; text-align: left; border-bottom: 1px solid #e2e8f0; }
+.scorecard-table th{ background: linear-gradient(90deg, #eff6ff 0%, #f8fbff 100%); color: #0f172a; font-weight: 700; font-size: 14px; }
+.scorecard-table tbody tr:hover{ background: rgba(37, 99, 235, 0.05); }
+.scorecard-table tbody tr.selected-row{ background: rgba(34, 197, 94, 0.06); }
+.scorecard-table tbody tr.pending-row{ background: rgba(248, 250, 252, 0.9); }
 .aspect-cell{ font-weight: 700; color: #142d4c; }
+.statement-cell{ color: #475569; font-size: 14px; line-height: 1.5; }
+.statement-preview{ display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; }
 
 .selected-grade{
-  display: inline-flex; align-items: center; justify-content: center; min-width: 68px; min-height: 38px;
-  padding: 0 14px; border-radius: 999px; font-size: 14px; font-weight: 700; letter-spacing: 0.02em;
+  display: inline-flex; align-items: center; justify-content: center; min-width: 90px; min-height: 38px;
+  padding: 0 12px; border-radius: 999px; font-size: 13px; font-weight: 700; letter-spacing: 0.02em;
   background: #eef4ff; color: #1d4ed8;
 }
 .selected-grade-empty { background: #f3f4f6; color: #6b7280; }
@@ -456,50 +623,78 @@ Scorecard & Print Options
 Graph / Chart CSS
 ================================ */
 .scorecard-chart-section{
-  margin-top: 28px; padding: 24px; background: linear-gradient(180deg, #f7faff 0%, #edf4ff 100%);
-  border: 1px solid #d5e2f3; border-radius: 18px;
+  margin-top: 28px; padding: 24px; background: linear-gradient(180deg, #f7fbff 0%, #eef7ff 100%);
+  border: 1px solid #d7e7f7; border-radius: 18px;
 }
-.scorecard-chart-header{ font-size: 18px; font-weight: 700; color: #15355f; margin-bottom: 8px; }
+.scorecard-chart-header{ font-size: 18px; font-weight: 800; color: #15355f; margin-bottom: 8px; }
 .scorecard-chart-legend{ font-size: 14px; color: #3f5674; margin-bottom: 18px; }
 
 .scorecard-chart{
-  display: grid; grid-template-columns: repeat(auto-fit, minmax(70px, 1fr));
-  gap: 14px; align-items: end; justify-items: center;
+  display: flex;
+  gap: 10px;
+  align-items: stretch;
 }
-.chart-bar-column{ display: flex; flex-direction: column; align-items: center; gap: 10px; min-width: 0; width: 100%; }
+.scorecard-chart-axis{
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  min-width: 28px;
+  padding: 8px 0 8px 2px;
+  color: #64748b;
+  font-size: 11px;
+  font-weight: 700;
+}
+.scorecard-chart-bars{
+  flex: 1;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(62px, 1fr));
+  gap: 10px;
+  align-items: end;
+}
+.chart-bar-column{ display: flex; flex-direction: column; align-items: center; gap: 6px; min-width: 0; width: 100%; }
 
 .chart-bar-wrapper{
-  position: relative; width: 100%; min-height: 180px;
+  position: relative; width: 100%; min-height: 160px;
   background: linear-gradient(180deg, #f8fafc 0%, #e8eef7 100%);
-  border: 1px solid #d8e2ee; border-radius: 18px; padding: 8px 0 0;
+  border: 1px solid #d8e2ee; border-radius: 14px; padding: 6px 0 0;
   display: flex; align-items: flex-end; justify-content: center;
   box-shadow: inset 0 1px 3px rgba(15, 23, 42, 0.06);
+  overflow: hidden;
+}
+
+.chart-bar-wrapper::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background-image: linear-gradient(to top, rgba(15, 23, 42, 0.06) 1px, transparent 1px);
+  background-size: 100% 25%;
+  pointer-events: none;
 }
 
 .chart-bar-fill{
-  position: relative; width: 80%; border-radius: 999px 999px 0 0; cursor: pointer;
+  position: relative; width: 42%; max-width: 38px; min-width: 14px; border-radius: 999px 999px 0 0; cursor: pointer;
   transition: transform 0.2s ease, box-shadow 0.2s ease, filter 0.2s ease;
 }
 
 /* Lightest to Darkest Green based on Level */
-.chart-bar-0 { background-color: #e9ecef; } 
-.chart-bar-1 { background-color: #c3e6cb; } 
-.chart-bar-2 { background-color: #75b798; } 
-.chart-bar-3 { background-color: #20c997; } 
-.chart-bar-4 { background-color: #145c32; } 
+.chart-bar-0 { background: linear-gradient(180deg, #d1d5db 0%, #94a3b8 100%); } 
+.chart-bar-1 { background: linear-gradient(180deg, #a7f3d0 0%, #34d399 100%); } 
+.chart-bar-2 { background: linear-gradient(180deg, #34d399 0%, #10b981 100%); } 
+.chart-bar-3 { background: linear-gradient(180deg, #10b981 0%, #059669 100%); } 
+.chart-bar-4 { background: linear-gradient(180deg, #059669 0%, #064e3b 100%); } 
 
 /* Custom Tooltip */
 .chart-bar-fill::after {
   content: attr(data-tooltip);
   position: absolute;
-  top: -40px;
+  top: -42px;
   left: 50%;
   transform: translateX(-50%);
   background: #122f57;
   color: #fff;
   padding: 6px 12px;
-  border-radius: 6px;
-  font-size: 13px;
+  border-radius: 8px;
+  font-size: 12px;
   font-weight: 600;
   white-space: nowrap;
   opacity: 0;
@@ -527,9 +722,11 @@ Graph / Chart CSS
 
 .chart-bar-fill:hover::after,
 .chart-bar-fill:hover::before { opacity: 1; visibility: visible; }
-.chart-bar-fill:hover::after { top: -45px; }
+.chart-bar-fill:hover::after { top: -46px; }
 .chart-bar-fill:hover::before { top: -15px; }
 
+.chart-bar-grade{ font-size: 12px; color: #1d4ed8; font-weight: 700; }
+.chart-bar-level{ font-size: 11px; color: #145c32; font-weight: 700; }
 .chart-bar-aspect{ font-size: 12px; color: #122f58; text-align: center; line-height: 1.4; opacity: 0.98; max-width: 100%; font-weight: 700;}
 
 /* ===============================
@@ -667,6 +864,12 @@ PRINT CSS (PDF Download)
   .scorecard-chart-section {
     page-break-inside: avoid !important;
     border: 1px solid #ccc !important;
+    overflow: visible !important;
+  }
+
+  .scorecard-chart,
+  .scorecard-chart-bars {
+    overflow: visible !important;
   }
 
   .chart-bar-wrapper,
