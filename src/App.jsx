@@ -137,12 +137,15 @@ function App() {
   const [showReview, setShowReview] = useState(false);
   const scorecardRef = useRef(null);
   const schoolSelectionRef = useRef(null);
+  const criteriaSectionRef = useRef(null);
   
   const [isSubmitted, setIsSubmitted] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitMessage, setSubmitMessage] = useState({ type: '', text: '' });
 
   // 1. Fetch School List from Google Sheets
+  const isContactNumberValid = /^[6-9]\d{9}$/.test(contactNumber.trim());
+
   useEffect(() => {
     // REPLACE THIS URL WITH YOUR GOOGLE APPS SCRIPT WEB APP URL
     const scriptUrl = "https://script.google.com/macros/s/AKfycbwm5vTN_1K7EsC7Vr9nWH3RrT1tEXwRitKccKVvB-1x6JI3VzSobOh7q4sh_7GQCXP7/exec";
@@ -204,12 +207,21 @@ function App() {
     return () => window.clearTimeout(scrollToLatestField);
   }, [selectedState, selectedDistrict, selectedZone, selectedCluster, schoolName, role, evaluatorName, evaluationDate]);
 
+  useEffect(() => {
+    if (!isContactNumberValid || !window.matchMedia('(max-width: 768px)').matches) return;
+
+    const scrollToCriteriaSection = window.setTimeout(() => {
+      criteriaSectionRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }, 120);
+
+    return () => window.clearTimeout(scrollToCriteriaSection);
+  }, [isContactNumberValid]);
+
   const states = Object.keys(hierarchy).sort();
   const districts = selectedState && hierarchy[selectedState] ? Object.keys(hierarchy[selectedState]).sort() : [];
   const zones = selectedDistrict && hierarchy[selectedState]?.[selectedDistrict] ? Object.keys(hierarchy[selectedState][selectedDistrict]).sort() : [];
   const clusters = selectedZone && hierarchy[selectedState]?.[selectedDistrict]?.[selectedZone] ? Object.keys(hierarchy[selectedState][selectedDistrict][selectedZone]).sort() : [];
   const schoolsForSelection = selectedCluster && hierarchy[selectedState]?.[selectedDistrict]?.[selectedZone]?.[selectedCluster] ? hierarchy[selectedState][selectedDistrict][selectedZone][selectedCluster].sort() : [];
-  const isContactNumberValid = /^[6-9]\d{9}$/.test(contactNumber.trim());
 
   const gradeMap = {
     1: 'B',
@@ -251,12 +263,6 @@ function App() {
   const handleScoreChange = (criteriaId, value) => {
     setScores(prev => ({ ...prev, [criteriaId]: parseInt(value) }));
     setIsSubmitted(false);
-
-    const selectedCriteriaIndex = criteriaData.findIndex(c => c.id === criteriaId);
-
-    if (selectedCriteriaIndex === activeCriteriaIndex && selectedCriteriaIndex < criteriaData.length - 1) {
-      setActiveCriteriaIndex(selectedCriteriaIndex + 1);
-    }
   };
 
   const handlePreviousCriteria = () => {
@@ -744,7 +750,7 @@ function App() {
               </section>
 
               {isContactNumberValid && (
-                <section className="card">
+                <section className="card" ref={criteriaSectionRef}>
                   <div className="card-header">
                     <div>
                       <h2 className="card-title">Specific Criteria Evaluation</h2>
