@@ -378,15 +378,15 @@ Scorecard & Print Options
 .scorecard-school-info-box{
   display: flex;
   flex-direction: column;
-  gap: 10px;
-  padding: 18px 20px;
-  background: linear-gradient(135deg, #f0f9ff 0%, #ffffff 70%, #f3fff7 100%);
-  border: 1px solid #cfe0f3;
-  border-left: 6px solid #2563eb;
+  gap: 16px;
+  padding: 22px 24px;
+  background: linear-gradient(135deg, #f8fbff 0%, #ffffff 58%, #f3fbf7 100%);
+  border: 1px solid #d5e4f3;
+  border-left: 6px solid #0f766e;
   border-radius: 18px;
   flex: 1;
   min-width: 250px;
-  box-shadow: 0 12px 28px rgba(37, 99, 235, 0.12);
+  box-shadow: 0 14px 30px rgba(15, 23, 42, 0.08);
 }
 
 .school-info-top{
@@ -398,12 +398,13 @@ Scorecard & Print Options
 .school-info-icon{
   display: grid;
   place-items: center;
-  width: 46px;
-  height: 46px;
-  border-radius: 14px;
-  background: linear-gradient(135deg, #2563eb 0%, #14b8a6 100%);
+  width: 50px;
+  height: 50px;
+  flex: 0 0 auto;
+  border-radius: 16px;
+  background: linear-gradient(135deg, #0f766e 0%, #2563eb 100%);
   font-size: 22px;
-  box-shadow: 0 8px 18px rgba(37, 99, 235, 0.18);
+  box-shadow: 0 10px 22px rgba(15, 118, 110, 0.18);
 }
 
 .school-label{
@@ -417,14 +418,16 @@ Scorecard & Print Options
 
 .school-value{
   display: block;
-  font-size: 18px;
+  font-size: 20px;
   font-weight: 800;
   color: #0f172a;
+  line-height: 1.3;
+  overflow-wrap: anywhere;
 }
 
 .school-meta-row{
-  display: flex;
-  flex-wrap: wrap;
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
   gap: 8px;
   font-size: 13px;
   color: #475569;
@@ -435,10 +438,13 @@ Scorecard & Print Options
   display: inline-flex;
   align-items: center;
   gap: 4px;
-  padding: 6px 10px;
-  border-radius: 999px;
+  min-width: 0;
+  padding: 9px 11px;
+  border-radius: 12px;
   background: #f8fafc;
   border: 1px solid #e2e8f0;
+  line-height: 1.35;
+  overflow-wrap: anywhere;
 }
 
 .scorecard-summary-grid{
@@ -503,6 +509,103 @@ Scorecard & Print Options
 .summary-card-meta{
   font-size: 13px;
   color: #475569;
+}
+
+.scorecard-insights-grid{
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 16px;
+  margin-bottom: 28px;
+}
+
+.insight-card{
+  padding: 24px 22px;
+  border: 1px solid #dbe5f0;
+  border-radius: 18px;
+  background: linear-gradient(180deg, #ffffff 0%, #f8fbff 100%);
+  box-shadow: 0 12px 28px rgba(15, 23, 42, 0.06);
+}
+
+.performance-card{
+  background: linear-gradient(180deg, #f8fbff 0%, #f1fbf6 100%);
+  border-color: #bfdbfe;
+}
+
+.insight-title{
+  margin: 0 0 18px;
+  color: #020617;
+  font-size: 15px;
+  font-weight: 900;
+  letter-spacing: 0.08em;
+  text-align: center;
+  text-transform: uppercase;
+}
+
+.performance-score{
+  color: #061a3a;
+  font-size: 40px;
+  font-weight: 900;
+  line-height: 1;
+  text-align: center;
+  margin-bottom: 8px;
+}
+
+.performance-copy{
+  color: #31506f;
+  font-size: 14px;
+  text-align: center;
+}
+
+.performance-stats{
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  margin: 22px 0 18px;
+  color: #061a3a;
+  font-size: 16px;
+}
+
+.performance-stats span{
+  min-width: 0;
+}
+
+.performance-band{
+  display: table;
+  margin: 0 auto;
+  padding: 10px 18px;
+  border-radius: 999px;
+  background: #dcfce7;
+  color: #166534;
+  font-weight: 800;
+}
+
+.insight-list{
+  display: grid;
+  gap: 12px;
+}
+
+.insight-row{
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+  padding: 15px 14px;
+  border: 1px solid #dbe5f0;
+  border-radius: 14px;
+  background: #f8fbff;
+  color: #0f172a;
+}
+
+.insight-row strong{
+  font-size: 14px;
+  line-height: 1.35;
+}
+
+.insight-row span{
+  flex: 0 0 auto;
+  color: #0f2f57;
+  font-size: 13px;
+  font-weight: 700;
 }
 
 .summary-progress{ margin-top: 10px; }
@@ -928,6 +1031,163 @@ PRINT CSS (PDF Download)
   box-shadow: 0 6px 16px rgba(220, 38, 38, 0.3);
 }
 
+.scorecard-section.pdf-exporting {
+  width: 1100px;
+  max-width: 1100px;
+  margin: 0;
+  box-shadow: none;
+}
+
+.scorecard-section.pdf-exporting .scorecard-school-download-section {
+  display: block;
+}
+
+.scorecard-section.pdf-exporting .scorecard-school-info-box {
+  width: 100%;
+  min-width: 0;
+}
+
+.scorecard-section.pdf-exporting .school-info-top {
+  align-items: flex-start;
+}
+
+.scorecard-section.pdf-exporting .school-meta-row {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 8px;
+}
+
+.scorecard-section.pdf-exporting .school-meta-pill {
+  border-radius: 10px;
+}
+
+.scorecard-section.pdf-exporting .btn-download-pdf {
+  display: none;
+}
+
+.pdf-export-root {
+  position: absolute;
+  top: 0;
+  left: -12000px;
+  width: 1100px;
+  background: #ffffff;
+  z-index: -1;
+}
+
+.pdf-export-page {
+  position: relative;
+  overflow: hidden;
+  width: 1100px;
+  max-width: 1100px;
+  min-height: 1580px;
+  margin: 0;
+  background:
+    radial-gradient(circle at 88% 16%, rgba(34, 197, 94, 0.12), transparent 180px),
+    radial-gradient(circle at 10% 88%, rgba(14, 165, 233, 0.11), transparent 210px),
+    linear-gradient(180deg, #ffffff 0%, #f8fcfa 100%);
+}
+
+.pdf-export-page > *:not(.pdf-eco-visuals) {
+  position: relative;
+  z-index: 1;
+}
+
+.pdf-eco-visuals {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 0;
+}
+
+.pdf-eco-visuals::before,
+.pdf-eco-visuals::after {
+  content: "";
+  position: absolute;
+  border-radius: 999px;
+  border: 2px solid rgba(20, 92, 50, 0.08);
+}
+
+.pdf-eco-visuals::before {
+  right: -90px;
+  bottom: 110px;
+  width: 360px;
+  height: 360px;
+  background: radial-gradient(circle, rgba(220, 252, 231, 0.72), rgba(240, 253, 244, 0.18));
+}
+
+.pdf-eco-visuals::after {
+  left: -80px;
+  bottom: 70px;
+  width: 280px;
+  height: 280px;
+  background: radial-gradient(circle, rgba(219, 234, 254, 0.65), rgba(240, 249, 255, 0.15));
+}
+
+.pdf-eco-icon {
+  position: absolute;
+  display: grid;
+  place-items: center;
+  width: 82px;
+  height: 82px;
+  border-radius: 24px;
+  background: rgba(255, 255, 255, 0.78);
+  border: 1px solid rgba(191, 219, 254, 0.75);
+  box-shadow: 0 18px 34px rgba(15, 23, 42, 0.08);
+  font-size: 42px;
+}
+
+.pdf-eco-icon-leaf {
+  right: 86px;
+  bottom: 250px;
+  transform: rotate(-10deg);
+}
+
+.pdf-eco-icon-recycle {
+  right: 205px;
+  bottom: 118px;
+  transform: rotate(8deg);
+}
+
+.pdf-eco-icon-water {
+  left: 92px;
+  bottom: 205px;
+  transform: rotate(8deg);
+}
+
+.pdf-eco-icon-spark {
+  left: 215px;
+  bottom: 90px;
+  transform: rotate(-8deg);
+}
+
+.pdf-page-one {
+  padding-bottom: 330px;
+}
+
+.pdf-page-one::after {
+  content: "";
+  position: absolute;
+  left: 70px;
+  right: 70px;
+  bottom: 72px;
+  height: 190px;
+  border-radius: 28px;
+  background:
+    linear-gradient(135deg, rgba(20, 92, 50, 0.12), rgba(37, 99, 235, 0.08)),
+    linear-gradient(180deg, rgba(255, 255, 255, 0.65), rgba(255, 255, 255, 0.18));
+  border: 1px solid rgba(148, 163, 184, 0.24);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.8);
+}
+
+.pdf-page-two {
+  padding-bottom: 90px;
+}
+
+.pdf-page-two .pdf-eco-icon {
+  opacity: 0.28;
+  transform: scale(0.82);
+}
+
 /* ===============================
    Criteria Navigation Buttons
 ================================ */
@@ -996,4 +1256,496 @@ PRINT CSS (PDF Download)
 /* Level 4 (Grade A+) - Tallest, Darkest Green */
 .chart-bar-4 {
   background: linear-gradient(180deg, #059669 0%, #064e3b 100%);
+}
+
+/* ===============================
+   Mobile-only layout fixes
+   Keep these overrides at the end so desktop rules above do not win.
+================================ */
+@media (max-width: 768px) {
+  html,
+  body,
+  #root {
+    width: 100%;
+    max-width: 100%;
+    overflow-x: hidden;
+  }
+
+  .app {
+    padding: 12px 0;
+    min-height: 100svh;
+  }
+
+  .container {
+    width: 100%;
+    max-width: 100%;
+    margin: 0;
+    border-radius: 0;
+    box-shadow: none;
+  }
+
+  .header-banner {
+    padding: 14px 12px;
+  }
+
+  .banner-container {
+    flex-direction: column;
+    gap: 12px;
+    padding: 6px 0;
+    text-align: center;
+  }
+
+  .banner-left,
+  .banner-right,
+  .banner-center {
+    width: 100%;
+    padding: 0;
+  }
+
+  .banner-left,
+  .banner-right,
+  .banner-logos-right {
+    display: flex;
+    justify-content: center;
+  }
+
+  .banner-logos-right {
+    gap: 12px;
+    flex-wrap: wrap;
+  }
+
+  .banner-logo {
+    height: 48px;
+  }
+
+  .banner-logo-right {
+    height: 42px;
+  }
+
+  .banner-title {
+    font-size: 20px;
+    line-height: 1.25;
+    text-align: center;
+  }
+
+  .banner-subtitle {
+    font-size: 14px;
+  }
+
+  .content {
+    padding: 14px;
+  }
+
+  .card,
+  .scorecard-section {
+    padding: 14px;
+    border-radius: 12px;
+  }
+
+  .card-header,
+  .scorecard-table-header,
+  .scorecard-school-download-section,
+  .scorecard-topbar {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 12px;
+  }
+
+  .card-title {
+    font-size: 21px;
+    line-height: 1.25;
+  }
+
+  .card-subtitle,
+  .scorecard-table-caption {
+    font-size: 14px;
+  }
+
+  .school-selection-fields,
+  .form-grid,
+  .criteria-list,
+  .criteria-list-single,
+  .statement-options,
+  .statement-options-full,
+  .scorecard-summary-grid,
+  .scorecard-details-section {
+    grid-template-columns: 1fr;
+    gap: 14px;
+  }
+
+  .school-field-item,
+  .criteria-card,
+  .criteria-card-full {
+    min-height: auto;
+    padding: 16px;
+  }
+
+  .school-field-item:hover,
+  .criteria-card:hover,
+  .criteria-card-full:hover,
+  .option:hover,
+  .btn:hover,
+  .btn-download-pdf:hover {
+    transform: none;
+  }
+
+  .school-select,
+  .form-control {
+    min-height: 46px;
+    padding: 12px 14px;
+    font-size: 16px;
+  }
+
+  .criteria-heading {
+    font-size: 19px;
+    line-height: 1.3;
+    margin-bottom: 14px;
+  }
+
+  .option {
+    min-height: auto;
+    padding: 14px;
+    gap: 12px;
+    border-radius: 12px;
+  }
+
+  .statement-option .statement-text {
+    font-size: 14px;
+    line-height: 1.5;
+  }
+
+  .criteria-navigation {
+    gap: 10px;
+  }
+
+  .btn-nav {
+    flex: 1;
+    min-height: 44px;
+    padding: 10px 12px;
+  }
+
+  .btn {
+    border-radius: 0;
+    margin-inline: -14px;
+    width: calc(100% + 28px);
+  }
+
+  .scorecard-heading-box {
+    padding: 18px;
+    border-radius: 14px;
+  }
+
+  .scorecard-main-title {
+    font-size: 22px;
+    line-height: 1.25;
+  }
+
+  .scorecard-school-info-box {
+    min-width: 0;
+    padding: 14px;
+    border-radius: 14px;
+  }
+
+  .school-info-top {
+    align-items: flex-start;
+  }
+
+  .school-value {
+    font-size: 16px;
+    line-height: 1.35;
+    overflow-wrap: anywhere;
+  }
+
+  .school-meta-row {
+    grid-template-columns: 1fr;
+  }
+
+  .school-meta-pill {
+    justify-content: flex-start;
+    border-radius: 10px;
+  }
+
+  .btn-download-pdf {
+    width: 100%;
+    justify-content: center;
+    min-height: 46px;
+  }
+
+  .summary-card {
+    padding: 14px;
+    border-radius: 14px;
+  }
+
+  .scorecard-insights-grid {
+    grid-template-columns: 1fr;
+    gap: 14px;
+  }
+
+  .insight-card {
+    padding: 18px 16px;
+  }
+
+  .performance-stats,
+  .insight-row {
+    flex-direction: column;
+    align-items: stretch;
+    text-align: center;
+  }
+
+  .scorecard-table-wrapper {
+    margin-inline: -14px;
+    padding-inline: 14px;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .scorecard-table {
+    min-width: 640px;
+  }
+
+  .scorecard-table th,
+  .scorecard-table td {
+    padding: 12px 10px;
+  }
+
+  .scorecard-chart-section {
+    padding: 16px;
+    border-radius: 14px;
+  }
+
+  .scorecard-chart {
+    flex-direction: column;
+  }
+
+  .scorecard-chart-axis {
+    flex-direction: row;
+    min-width: 0;
+    padding: 0 0 8px;
+  }
+
+  .scorecard-chart-bars {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 12px;
+  }
+
+  .chart-bar-wrapper {
+    min-height: 140px;
+  }
+
+  .chart-bar-fill::before,
+  .chart-bar-fill::after {
+    display: none;
+  }
+}
+
+@media (max-width: 480px) {
+  .content {
+    padding: 12px;
+  }
+
+  .card,
+  .scorecard-section {
+    padding: 12px;
+  }
+
+  .school-field-item,
+  .criteria-card,
+  .criteria-card-full,
+  .option {
+    padding: 12px;
+  }
+
+  .banner-title {
+    font-size: 18px;
+  }
+
+  .banner-logo {
+    height: 42px;
+  }
+
+  .banner-logo-right {
+    height: 36px;
+  }
+
+  .criteria-navigation {
+    flex-direction: column;
+  }
+
+  .btn-nav-prev,
+  .btn-nav-next {
+    margin: 0;
+  }
+
+  .btn {
+    margin-inline: -12px;
+    width: calc(100% + 24px);
+  }
+
+  .scorecard-chart-bars {
+    grid-template-columns: 1fr;
+  }
+
+  .scorecard-table-wrapper {
+    margin-inline: -12px;
+    padding-inline: 12px;
+  }
+
+  .saving-popup {
+    padding: 28px 18px;
+  }
+}
+
+/* ===============================
+   Scorecard graph refinements
+================================ */
+.scorecard-chart-section {
+  background: #ffffff;
+  border: 1px solid #d8e5f2;
+  box-shadow: 0 12px 28px rgba(15, 23, 42, 0.06);
+}
+
+.scorecard-chart-header {
+  color: #0f2f57;
+}
+
+.scorecard-chart-legend {
+  color: #52657d;
+}
+
+.scorecard-chart {
+  position: relative;
+  gap: 14px;
+  padding: 16px 16px 14px;
+  border: 1px solid #dbe7f3;
+  border-radius: 16px;
+  background:
+    linear-gradient(to top, rgba(30, 64, 175, 0.08) 1px, transparent 1px),
+    linear-gradient(180deg, #fbfdff 0%, #f4f8fc 100%);
+  background-size: 100% 25%, 100% 100%;
+}
+
+.scorecard-chart-axis {
+  padding: 0 0 48px;
+  color: #60748d;
+  min-width: 54px;
+  text-align: right;
+  white-space: nowrap;
+}
+
+.scorecard-chart-bars {
+  grid-template-columns: repeat(10, minmax(54px, 1fr));
+  gap: 8px;
+  align-items: end;
+}
+
+.chart-bar-column {
+  gap: 7px;
+}
+
+.chart-bar-wrapper {
+  height: 190px;
+  min-height: 190px;
+  background: transparent;
+  border: 0;
+  border-radius: 0;
+  padding: 0;
+  box-shadow: none;
+}
+
+.chart-bar-wrapper::before {
+  display: none;
+}
+
+.chart-bar-fill {
+  width: 24px;
+  max-width: 24px;
+  min-width: 18px;
+  border-radius: 10px 10px 4px 4px;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.42), 0 8px 16px rgba(15, 23, 42, 0.12);
+}
+
+.chart-bar-fill::after {
+  top: -40px;
+}
+
+.chart-bar-grade {
+  min-height: 24px;
+  min-width: 36px;
+  padding: 3px 8px;
+  border-radius: 999px;
+  background: #eef6ff;
+  border: 1px solid #cfe0f5;
+  color: #1e4f8f;
+}
+
+.chart-bar-level {
+  color: #0f6b45;
+}
+
+.chart-bar-aspect {
+  min-height: 40px;
+  color: #163655;
+  font-size: 11px;
+  line-height: 1.25;
+  overflow-wrap: anywhere;
+}
+
+@media (max-width: 768px) {
+  .scorecard-chart-section {
+    padding: 14px;
+  }
+
+  .scorecard-chart {
+    flex-direction: row;
+    overflow-x: auto;
+    padding: 14px 12px 12px;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .scorecard-chart-axis {
+    flex: 0 0 56px;
+    flex-direction: column;
+    padding: 0 0 52px;
+    position: sticky;
+    left: 0;
+    z-index: 1;
+    background: linear-gradient(90deg, #fbfdff 70%, rgba(251, 253, 255, 0));
+  }
+
+  .scorecard-chart-bars {
+    flex: 0 0 auto;
+    width: 660px;
+    grid-template-columns: repeat(10, 58px);
+    gap: 8px;
+  }
+
+  .chart-bar-wrapper {
+    height: 170px;
+    min-height: 170px;
+  }
+
+  .chart-bar-fill {
+    width: 20px;
+    max-width: 20px;
+    min-width: 16px;
+  }
+}
+
+@media (max-width: 480px) {
+  .scorecard-chart-section {
+    padding: 12px;
+  }
+
+  .scorecard-chart {
+    margin-inline: -4px;
+  }
+
+  .scorecard-chart-bars {
+    width: 620px;
+    grid-template-columns: repeat(10, 54px);
+  }
+
+  .chart-bar-aspect {
+    font-size: 10px;
+  }
 }

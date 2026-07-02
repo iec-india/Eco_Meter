@@ -134,6 +134,7 @@ function App() {
   const [activeCriteriaIndex, setActiveCriteriaIndex] = useState(0);
   const [showReview, setShowReview] = useState(false);
   const scorecardRef = useRef(null);
+  const schoolSelectionRef = useRef(null);
   
   const [isSubmitted, setIsSubmitted] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -188,6 +189,19 @@ function App() {
     setHierarchy(h);
   }, [schoolList]);
 
+  useEffect(() => {
+    if (!selectedState && !selectedDistrict && !selectedZone && !selectedCluster && !schoolName && !role && !evaluatorName && !evaluationDate) return;
+    if (!window.matchMedia('(max-width: 768px)').matches) return;
+
+    const scrollToLatestField = window.setTimeout(() => {
+      const fields = schoolSelectionRef.current?.querySelectorAll('.school-field-item, .form-group');
+      const latestField = fields?.[fields.length - 1];
+      latestField?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    }, 80);
+
+    return () => window.clearTimeout(scrollToLatestField);
+  }, [selectedState, selectedDistrict, selectedZone, selectedCluster, schoolName, role, evaluatorName, evaluationDate]);
+
   const states = Object.keys(hierarchy).sort();
   const districts = selectedState && hierarchy[selectedState] ? Object.keys(hierarchy[selectedState]).sort() : [];
   const zones = selectedDistrict && hierarchy[selectedState]?.[selectedDistrict] ? Object.keys(hierarchy[selectedState][selectedDistrict]).sort() : [];
@@ -204,9 +218,14 @@ function App() {
 
   const getGrade = (score) => score && gradeMap[score] ? gradeMap[score] : '-';
   const getLevelPercent = (score) => {
-    if (!score) return 0;
-    const numericScore = Math.max(1, Math.min(4, parseInt(score, 10)));
-    return (numericScore / 4) * 100;
+    const levelPercentMap = {
+      1: 25,
+      2: 50,
+      3: 75,
+      4: 100
+    };
+
+    return levelPercentMap[score] || 0;
   };
 
   const scoredCriteria = criteriaData.filter((item) => scores[item.id]);
@@ -219,6 +238,13 @@ function App() {
     const currentScore = scores[item.id];
     return currentScore > best.score ? { score: currentScore, title: item.title } : best;
   }, { score: 0, title: 'Awaiting evaluation' });
+  const scoreRanking = scoredCriteria
+    .map((item) => ({ ...item, score: scores[item.id], grade: getGrade(scores[item.id]) }))
+    .sort((a, b) => b.score - a.score || a.title.localeCompare(b.title));
+  const strengths = scoreRanking.slice(0, 3);
+  const focusAreas = [...scoreRanking]
+    .sort((a, b) => a.score - b.score || a.title.localeCompare(b.title))
+    .slice(0, 3);
 
   const handleScoreChange = (criteriaId, value) => {
     setScores(prev => ({ ...prev, [criteriaId]: parseInt(value) }));
@@ -244,41 +270,108 @@ function App() {
   };
 
   const handleDownloadPdf = async () => {
-    if (!scorecardRef.current) {
+    const scorecardElement = scorecardRef.current;
+
+    if (!scorecardElement) {
       window.print();
       return;
     }
 
     try {
-      const canvas = await html2canvas(scorecardRef.current, {
-        scale: 2,
-        useCORS: true,
-        backgroundColor: '#ffffff',
-        width: scorecardRef.current.scrollWidth,
-        height: scorecardRef.current.scrollHeight
-      });
-      const imgData = canvas.toDataURL('image/png');
-      const pdf = new jsPDF('p', 'mm', 'a4');
+      scorecardElement.classList.add('pdf-exporting');
+      await new Promise((resolve) => requestAnimationFrame(() => requestAnimationFrame(resolve)));
+
+      const pdf = new jsPDF('p', 'mm', 'a4', true);
       const pageWidth = pdf.internal.pageSize.getWidth();
       const pageHeight = pdf.internal.pageSize.getHeight();
-      const margin = 8;
+      const margin = 6;
       const maxWidth = pageWidth - (margin * 2);
       const maxHeight = pageHeight - (margin * 2);
 
-      let imgWidth = maxWidth;
-      let imgHeight = (canvas.height * imgWidth) / canvas.width;
+      const createExportPage = (selectors, pageClassName) => {
+        const page = document.createElement('section');
+        page.className = `scorecard-section pdf-exporting pdf-export-page ${pageClassName}`;
 
-      if (imgHeight > maxHeight) {
-        const ratio = maxHeight / imgHeight;
-        imgWidth = imgWidth * ratio;
-        imgHeight = maxHeight;
+        const visualLayer = document.createElement('div');
+        visualLayer.className = 'pdf-eco-visuals';
+        visualLayer.setAttribute('aria-hidden', 'true');
+        visualLayer.innerHTML = `
+          <span class="pdf-eco-icon pdf-eco-icon-leaf">🌿</span>
+          <span class="pdf-eco-icon pdf-eco-icon-recycle">♻️</span>
+          <span class="pdf-eco-icon pdf-eco-icon-water">💧</span>
+          <span class="pdf-eco-icon pdf-eco-icon-spark">✨</span>
+        `;
+        page.appendChild(visualLayer);
+
+        selectors.forEach((selector) => {
+          const section = scorecardElement.querySelector(selector);
+          if (section) {
+            page.appendChild(section.cloneNode(true));
+          }
+        });
+
+        return page;
+      };
+
+      const exportRoot = document.createElement('div');
+      exportRoot.className = 'pdf-export-root';
+      document.body.appendChild(exportRoot);
+
+      const exportPages = [
+        createExportPage([
+          '.scorecard-topbar',
+          '.scorecard-school-download-section',
+          '.scorecard-summary-grid',
+          '.scorecard-insights-grid'
+        ], 'pdf-page-one'),
+        createExportPage([
+          '.scorecard-table-section',
+          '.scorecard-chart-section'
+        ], 'pdf-page-two')
+      ];
+
+      for (let pageIndex = 0; pageIndex < exportPages.length; pageIndex += 1) {
+        const exportPage = exportPages[pageIndex];
+        exportRoot.appendChild(exportPage);
+        await new Promise((resolve) => requestAnimationFrame(() => requestAnimationFrame(resolve)));
+
+        const canvas = await html2canvas(exportPage, {
+          scale: 1.25,
+          useCORS: true,
+          backgroundColor: '#ffffff',
+          width: exportPage.scrollWidth,
+          height: exportPage.scrollHeight,
+          logging: false
+        });
+
+        const imgData = canvas.toDataURL('image/jpeg', 0.82);
+        let imgWidth = maxWidth;
+        let imgHeight = (canvas.height * imgWidth) / canvas.width;
+
+        if (imgHeight > maxHeight) {
+          const fitRatio = maxHeight / imgHeight;
+          imgWidth *= fitRatio;
+          imgHeight = maxHeight;
+        }
+
+        if (pageIndex > 0) {
+          pdf.addPage();
+        }
+
+        const imageLeft = (pageWidth - imgWidth) / 2;
+        pdf.addImage(imgData, 'JPEG', imageLeft, margin, imgWidth, imgHeight, `scorecard-page-${pageIndex}`, 'FAST');
+        exportPage.remove();
       }
 
-      pdf.addImage(imgData, 'PNG', margin, margin, imgWidth, imgHeight);
+      exportRoot.remove();
+
       pdf.save(`${schoolName ? schoolName.replace(/[^a-zA-Z0-9-_ ]/g, '') : 'scorecard'}-scorecard.pdf`);
     } catch (error) {
       console.error('PDF generation failed:', error);
       window.print();
+    } finally {
+      scorecardElement.classList.remove('pdf-exporting');
+      document.querySelectorAll('.pdf-export-root').forEach((node) => node.remove());
     }
   };
 
@@ -406,7 +499,7 @@ function App() {
         <div className="content">
           {!isSubmitted && (
             <form onSubmit={handleSubmit} className="print-hide">
-              <section className="card school-info-card">
+              <section className="card school-info-card" ref={schoolSelectionRef}>
                 <div className="card-header">
                   <div>
                     <h2 className="card-title">School Selection</h2>
@@ -753,9 +846,12 @@ function App() {
                     </div>
                   </div>
                   <div className="school-meta-row">
+                    <span className="school-meta-pill"><strong>State:</strong> {selectedState}</span>
                     <span className="school-meta-pill"><strong>Cluster:</strong> {selectedCluster}</span>
                     <span className="school-meta-pill"><strong>Zone:</strong> {selectedZone}</span>
                     <span className="school-meta-pill"><strong>District:</strong> {selectedDistrict}</span>
+                    <span className="school-meta-pill"><strong>Role:</strong> {role}</span>
+                    <span className="school-meta-pill"><strong>Date:</strong> {evaluationDate}</span>
                   </div>
                 </div>
                 <button onClick={handleDownloadPdf} className="btn-download-pdf print-hide" type="button">
@@ -786,6 +882,43 @@ function App() {
                   <span className="summary-card-label">Highest Achieved</span>
                   <div className="summary-card-value">{highestLevel.score ? getGrade(highestLevel.score) : '—'}</div>
                   <div className="summary-card-meta">{highestLevel.title}</div>
+                </div>
+              </div>
+
+              <div className="scorecard-insights-grid">
+                <div className="insight-card performance-card">
+                  <h3 className="insight-title">Performance Snapshot</h3>
+                  <div className="performance-score">{overallPercentage}%</div>
+                  <p className="performance-copy">Overall score across all assessed aspects</p>
+                  <div className="performance-stats">
+                    <span><strong>{completedCriteriaCount}/{criteriaData.length}</strong> rated</span>
+                    <span><strong>{averageScore}/4</strong> average</span>
+                  </div>
+                  <span className="performance-band">{overallBand}</span>
+                </div>
+
+                <div className="insight-card">
+                  <h3 className="insight-title">Strengths</h3>
+                  <div className="insight-list">
+                    {strengths.map((item) => (
+                      <div className="insight-row" key={`strength-${item.id}`}>
+                        <strong>{item.title}</strong>
+                        <span>{item.grade} · Level {item.score}</span>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+
+                <div className="insight-card">
+                  <h3 className="insight-title">Focus Areas</h3>
+                  <div className="insight-list">
+                    {focusAreas.map((item) => (
+                      <div className="insight-row" key={`focus-${item.id}`}>
+                        <strong>{item.title}</strong>
+                        <span>{item.grade} · Level {item.score}</span>
+                      </div>
+                    ))}
+                  </div>
                 </div>
               </div>
 
@@ -830,13 +963,13 @@ function App() {
 
               <div className="scorecard-chart-section">
                 <div className="scorecard-chart-header">Aspect-wise level chart</div>
-                <div className="scorecard-chart-legend">Bars are scaled from 0–100 and reflect the selected level from Level 1 to Level 4.</div>
+                <div className="scorecard-chart-legend">Grade scale: B reaches 25, B+ reaches 50, A reaches 75, and A+ reaches 100.</div>
                 <div className="scorecard-chart">
                   <div className="scorecard-chart-axis" aria-hidden="true">
-                    <span>100</span>
-                    <span>75</span>
-                    <span>50</span>
-                    <span>25</span>
+                    <span>A+ 100</span>
+                    <span>A 75</span>
+                    <span>B+ 50</span>
+                    <span>B 25</span>
                     <span>0</span>
                   </div>
                   <div className="scorecard-chart-bars">
@@ -851,7 +984,7 @@ function App() {
                           <div className="chart-bar-wrapper">
                             <div
                               className={`chart-bar-fill chart-bar-${selectedScore}`}
-                              style={{ height: `${selectedScore ? Math.max(barHeight, 12) : 8}%`, minHeight: selectedScore ? '18px' : '8px' }}
+                              style={{ height: `${barHeight}%` }}
                               title={`${item.title}: ${selectedGrade} (${levelText})`}
                               aria-label={`${item.title}: ${selectedGrade} (${levelText})`}
                               data-tooltip={`${item.title}: ${selectedGrade} (${levelText})`}
