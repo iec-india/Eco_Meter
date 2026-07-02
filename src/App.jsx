@@ -7,6 +7,7 @@ import jmcLogo from './assets/jmc.png';
 import jsPDF from 'jspdf';
 import html2canvas from 'html2canvas';
 import { Filesystem, Directory } from '@capacitor/filesystem';
+import { Capacitor } from '@capacitor/core';
 
 // Eco-Meter 10 Criteria and their specific level statements
 const criteriaData = [
@@ -367,17 +368,20 @@ function App() {
       exportRoot.remove();
 
       const fileName = `${schoolName ? schoolName.replace(/[^a-zA-Z0-9-_ ]/g, '') : 'scorecard'}-scorecard.pdf`;
+      const platform = (typeof Capacitor !== 'undefined' && Capacitor.getPlatform) ? Capacitor.getPlatform() : 'web';
+      const isNative = platform !== 'web';
 
-      // 📱 मोबाइल के लिए PDF को Base64 में कन्वर्ट करके Filesystem से सेव करना
-      const pdfBase64 = pdf.output('datauristring').split(',')[1];
-
-      await Filesystem.writeFile({
-        path: fileName,
-        data: pdfBase64,
-        directory: Directory.Documents
-      });
-
-      alert(`PDF successfully saved to Documents folder as ${fileName}`);
+      if (isNative && Filesystem && Filesystem.writeFile) {
+        const pdfBase64 = pdf.output('datauristring').split(',')[1];
+        await Filesystem.writeFile({
+          path: fileName,
+          data: pdfBase64,
+          directory: Directory.Documents
+        });
+        alert(`PDF successfully saved to Documents folder as ${fileName}`);
+      } else {
+        pdf.save(fileName);
+      }
     } catch (error) {
       console.error('PDF generation failed:', error);
       window.print();
