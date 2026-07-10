@@ -129,17 +129,23 @@ function App() {
   const [selectedZone, setSelectedZone] = useState('');
   const [selectedCluster, setSelectedCluster] = useState('');
   const [schoolName, setSchoolName] = useState('');
-  const [role, setRole] = useState('');
+  const [occasion, setOccasion] = useState('');
+  const [occasionOther, setOccasionOther] = useState('');
+  const [smcAttendees, setSmcAttendees] = useState('');
+  const [discussionParticipants, setDiscussionParticipants] = useState([]);
+  const [discussionOtherParticipant, setDiscussionOtherParticipant] = useState('');
+  const [secondingName, setSecondingName] = useState('');
+  const [secondingRole, setSecondingRole] = useState('');
+  const [secondingContact, setSecondingContact] = useState('');
 
   // Initialize scores with no default values
   const [scores, setScores] = useState({});
   const [activeCriteriaIndex, setActiveCriteriaIndex] = useState(0);
-  const [showReview, setShowReview] = useState(false);
   const scorecardRef = useRef(null);
   const schoolSelectionRef = useRef(null);
   const criteriaSectionRef = useRef(null);
   
-  const [isSubmitted, setIsSubmitted] = useState(false);
+  const [showReport, setShowReport] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitMessage, setSubmitMessage] = useState({ type: '', text: '' });
 
@@ -195,7 +201,7 @@ function App() {
   }, [schoolList]);
 
   useEffect(() => {
-    if (!selectedState && !selectedDistrict && !selectedZone && !selectedCluster && !schoolName && !role && !evaluatorName && !evaluationDate) return;
+    if (!selectedState && !selectedDistrict && !selectedZone && !selectedCluster && !schoolName && !evaluatorName && !evaluationDate) return;
     if (!window.matchMedia('(max-width: 768px)').matches) return;
 
     const scrollToLatestField = window.setTimeout(() => {
@@ -205,7 +211,7 @@ function App() {
     }, 80);
 
     return () => window.clearTimeout(scrollToLatestField);
-  }, [selectedState, selectedDistrict, selectedZone, selectedCluster, schoolName, role, evaluatorName, evaluationDate]);
+  }, [selectedState, selectedDistrict, selectedZone, selectedCluster, schoolName, evaluatorName, evaluationDate]);
 
   useEffect(() => {
     if (!isContactNumberValid || !window.matchMedia('(max-width: 768px)').matches) return;
@@ -260,9 +266,14 @@ function App() {
     .sort((a, b) => a.score - b.score || a.title.localeCompare(b.title))
     .slice(0, 3);
 
+  const discussionParticipantName = discussionParticipants.includes('Other')
+    ? discussionOtherParticipant
+    : discussionParticipants.join(', ');
+  const discussionParticipantRole = secondingRole || 'N/A';
+
   const handleScoreChange = (criteriaId, value) => {
     setScores(prev => ({ ...prev, [criteriaId]: parseInt(value) }));
-    setIsSubmitted(false);
+    setShowReport(false);
   };
 
   const handlePreviousCriteria = () => {
@@ -416,6 +427,51 @@ function App() {
       return;
     }
 
+    if (!occasion.trim()) {
+      alert("Please select the occasion of form filling.");
+      return;
+    }
+
+    if (occasion === 'Other' && !occasionOther.trim()) {
+      alert("Please specify the occasion.");
+      return;
+    }
+
+    if (occasion === 'During monthly SMC meeting' && !smcAttendees.trim()) {
+      alert("Please specify the total number of attendees present at the SMC meeting.");
+      return;
+    }
+
+    if (discussionParticipants.length === 0) {
+      alert("Please select who was involved in the discussion before finalizing the scores.");
+      return;
+    }
+
+    if (discussionParticipants.includes('Other') && !discussionOtherParticipant.trim()) {
+      alert("Please specify the other participant involved in the discussion.");
+      return;
+    }
+
+    if (!secondingName.trim()) {
+      alert("Please enter the person who is seconding the information.");
+      return;
+    }
+
+    if (!secondingRole.trim()) {
+      alert("Please enter the role of the person seconding the information.");
+      return;
+    }
+
+    if (!secondingContact.trim()) {
+      alert("Seconding contact number is mandatory!");
+      return;
+    }
+
+    if (!indianMobileRegex.test(secondingContact.trim())) {
+      alert("Please enter a valid 10-digit seconding contact number starting with 6, 7, 8, or 9.");
+      return;
+    }
+
     // Validate that all criteria have been scored
     const allScored = criteriaData.every(c => scores[c.id] !== undefined);
     if (!allScored) {
@@ -425,14 +481,23 @@ function App() {
 
     setIsSubmitting(true);
     setSubmitMessage({ type: '', text: '' });
-    
+
     const finalData = {
       schoolInfo: {
         schoolName,
-        role,
+        occasion,
+        occasionOther,
+        smcAttendees,
+        discussionParticipants,
+        discussionOtherParticipant,
         evaluatorName,
         evaluationDate,
         contactNumber
+      },
+      secondingInfo: {
+        name: secondingName,
+        role: secondingRole,
+        contactNumber: secondingContact
       },
       evaluations: criteriaData.map(c => ({
         criteria: c.title,
@@ -443,17 +508,24 @@ function App() {
 
     const payload = {
       school_name: schoolName,
-      role,
       evaluator_name: evaluatorName,
       evaluation_date: evaluationDate,
       contact_number: contactNumber,
+      occasion: occasion,
+      occasion_other: occasionOther,
+      smc_attendees: smcAttendees ? parseInt(smcAttendees) : null,
+      discussion_participants: discussionParticipants,
+      discussion_other_participant: discussionOtherParticipant,
+      seconding_name: secondingName,
+      seconding_role: secondingRole,
+      seconding_contact_number: secondingContact,
       state: selectedState,
       district: selectedDistrict,
       zone: selectedZone,
       cluster: selectedCluster,
       scores: finalData.evaluations
     };
-    
+
     try {
       const { error } = await supabase.from(SUPABASE_TABLE).insert([payload]);
 
@@ -462,7 +534,7 @@ function App() {
       }
 
       console.log("Collected Data:", finalData);
-      setIsSubmitted(true);
+      setShowReport(true);
       setSubmitMessage({
         type: 'success',
         text: 'Evaluation submitted successfully.\nThank you for completing the Eco Meter assessment.'
@@ -519,7 +591,7 @@ function App() {
         </header>
 
         <div className="content">
-          {!isSubmitted && (
+          {!showReport && (
             <form onSubmit={handleSubmit} className="print-hide">
               <section className="card school-info-card" ref={schoolSelectionRef}>
                 <div className="card-header">
@@ -553,7 +625,6 @@ function App() {
                           setSelectedZone('');
                           setSelectedCluster('');
                           setSchoolName('');
-                          setRole('');
                           setEvaluatorName('');
                           setEvaluationDate('');
                           setContactNumber('');
@@ -577,7 +648,6 @@ function App() {
                           setSelectedZone('');
                           setSelectedCluster('');
                           setSchoolName('');
-                          setRole('');
                           setEvaluatorName('');
                           setEvaluationDate('');
                           setContactNumber('');
@@ -600,7 +670,6 @@ function App() {
                           setSelectedZone(e.target.value);
                           setSelectedCluster('');
                           setSchoolName('');
-                          setRole('');
                           setEvaluatorName('');
                           setEvaluationDate('');
                           setContactNumber('');
@@ -622,7 +691,6 @@ function App() {
                         onChange={(e) => {
                           setSelectedCluster(e.target.value);
                           setSchoolName('');
-                          setRole('');
                           setEvaluatorName('');
                           setEvaluationDate('');
                           setContactNumber('');
@@ -643,7 +711,6 @@ function App() {
                         value={schoolName}
                         onChange={(e) => {
                           setSchoolName(e.target.value);
-                          setRole('');
                           setEvaluatorName('');
                           setEvaluationDate('');
                           setContactNumber('');
@@ -657,45 +724,19 @@ function App() {
                     </div>
                   )}
 
-                  {schoolName && (
-                    <div className="school-field-item">
-                      <label htmlFor="role" className="school-field-label">Role</label>
-                      <select
-                        id="role"
-                        className="form-control school-select"
-                        value={role}
-                        onChange={(e) => {
-                          setRole(e.target.value);
-                          setEvaluatorName('');
-                          setEvaluationDate('');
-                          setContactNumber('');
-                        }}
-                        required
-                        style={{ cursor: 'pointer' }}
-                      >
-                        <option value="" disabled>-- Select Role --</option>
-                        <option value="HOI">HOI</option>
-                        <option value="Nodal Teacher">Nodal Teacher</option>
-                        <option value="SMC Precedence">SMC Precedence</option>
-                        <option value="Eco Club Member">Eco Club Member</option>
-                        <option value="Local Influencer">Local Influencer</option>
-                        <option value="Other">Other</option>
-                      </select>
-                    </div>
-                  )}
                 </div>
 
-                {role && (
+                {schoolName && (
                   <>
                     <hr style={{ border: 'none', borderTop: '1px solid #ececec', margin: '30px 0' }} />
                     <div className="card-header">
                       <div>
-                        <h2 className="card-title">Evaluator Details</h2>
+                        <h2 className="card-title">Nodal Teacher Details</h2>
                       </div>
                     </div>
                     <div className="form-grid">
                       <div className="form-group">
-                        <label htmlFor="evaluatorName">Evaluator Name</label>
+                        <label htmlFor="evaluatorName">Name</label>
                         <input
                           id="evaluatorName"
                           className="form-control"
@@ -733,7 +774,7 @@ function App() {
                               setContactNumber(e.target.value.replace(/\D/g, '').slice(0, 10));
                               setScores({});
                               setActiveCriteriaIndex(0);
-                              setIsSubmitted(false);
+                              setShowReport(false);
                             }}
                             placeholder="Enter 10-digit mobile number"
                             inputMode="numeric"
@@ -758,7 +799,7 @@ function App() {
                   </div>
 
                   <div className="criteria-list-single">
-                    {(() => {
+                  {(() => {
                       const item = criteriaData[activeCriteriaIndex];
                       const index = activeCriteriaIndex;
                       const safeId = item.id.replace(/\s+/g, '-').toLowerCase();
@@ -828,6 +869,182 @@ function App() {
                 </section>
               )}
 
+              {isContactNumberValid && completedCriteriaCount === criteriaData.length && (
+                <section className="card seconding-info-card">
+                  <div className="card-header">
+                    <div>
+                      <h2 className="card-title">Discussion & Verification</h2>
+                    </div>
+                  </div>
+
+                  <div className="form-grid seconding-grid">
+                    <div className="form-group full-width question-box">
+                      <div className="box-heading">Occasion of form filling</div>
+                      <div className="form-grid occasion-row-grid">
+                        <div className={`form-group ${occasion ? '' : 'full-span'}`}>
+                          <label htmlFor="occasionSelect">Select occasion</label>
+                          <select
+                            id="occasionSelect"
+                            className={`form-control ${occasion ? 'answered' : ''}`}
+                            value={occasion}
+                            onChange={(e) => {
+                              const value = e.target.value;
+                              setOccasion(value);
+                              setOccasionOther('');
+                              setSmcAttendees('');
+                            }}
+                            required
+                          >
+                            <option value="" disabled>Choose occasion</option>
+                            <option value="During monthly SMC meeting">During monthly SMC meeting</option>
+                            <option value="Other">Other</option>
+                          </select>
+                        </div>
+
+                        {occasion === 'Other' && (
+                          <div className="form-group">
+                            <label htmlFor="occasionOther">Please specify the occasion</label>
+                            <input
+                              id="occasionOther"
+                              className={`form-control ${occasionOther.trim() ? 'answered' : ''}`}
+                              type="text"
+                              value={occasionOther}
+                              onChange={(e) => setOccasionOther(e.target.value)}
+                              placeholder="Enter occasion"
+                              required
+                            />
+                          </div>
+                        )}
+
+                        {occasion === 'During monthly SMC meeting' && (
+                          <div className="form-group">
+                            <label htmlFor="smcAttendees">Total number of attendees present at the SMC meeting</label>
+                            <input
+                              id="smcAttendees"
+                              className={`form-control ${smcAttendees.trim() ? 'answered' : ''}`}
+                              type="number"
+                              value={smcAttendees}
+                              onChange={(e) => setSmcAttendees(e.target.value.replace(/\D/g, ''))}
+                              placeholder="Enter number of attendees"
+                              min="1"
+                              required
+                            />
+                          </div>
+                        )}
+                      </div>
+                    </div>
+
+                    {(occasion === 'Other' ? occasionOther.trim() : occasion === 'During monthly SMC meeting' ? smcAttendees.trim() : false) && (
+                      <div className="form-group full-width question-box">
+                        <div className="box-heading">Who was involved in the discussion before finalizing the scores?</div>
+                        <div className="discussion-options">
+                          {['HOI', 'Nodal Teacher', 'SMC Precedence', 'Eco Club Member', 'Local Influencer', 'Other'].map(option => (
+                            <button
+                              key={option}
+                              type="button"
+                              className={`discussion-chip ${discussionParticipants.includes(option) ? 'active' : ''}`}
+                              onClick={() => {
+                                setDiscussionParticipants(prev => {
+                                  if (prev.includes(option)) {
+                                    return prev.filter(item => item !== option);
+                                  }
+                                  return [...prev, option];
+                                });
+                                if (option !== 'Other') {
+                                  setDiscussionOtherParticipant('');
+                                }
+                              }}
+                            >
+                              {option}
+                            </button>
+                          ))}
+                        </div>
+                      </div>
+                    )}
+
+                    {discussionParticipants.includes('Other') && (
+                      <div className="form-group full-width question-box">
+                        <label htmlFor="discussionOtherParticipant">Specify other participant</label>
+                        <input
+                          id="discussionOtherParticipant"
+                          className={`form-control ${discussionOtherParticipant.trim() ? 'answered' : ''}`}
+                          type="text"
+                          value={discussionOtherParticipant}
+                          onChange={(e) => setDiscussionOtherParticipant(e.target.value)}
+                          placeholder="Enter other participant"
+                          required
+                        />
+                      </div>
+                    )}
+
+                    {(discussionParticipants.length > 0 && (!discussionParticipants.includes('Other') || discussionOtherParticipant.trim())) && (
+                      <div className="form-group full-width question-box">
+                        <div className="box-heading">Seconding information</div>
+                        <div className="form-grid seconding-row-grid">
+                          <div className="form-group">
+                            <label htmlFor="secondingName">Name</label>
+                            <input
+                              id="secondingName"
+                              className={`form-control ${secondingName.trim() ? 'answered' : ''}`}
+                              type="text"
+                              value={secondingName}
+                              onChange={(e) => setSecondingName(e.target.value)}
+                              placeholder="Enter seconding person's name"
+                              required
+                            />
+                          </div>
+
+                          <div className="form-group">
+                            <label htmlFor="secondingRole">Role</label>
+                            <select
+                              id="secondingRole"
+                              className={`form-control ${secondingRole ? 'answered' : ''}`}
+                              value={secondingRole}
+                              onChange={(e) => setSecondingRole(e.target.value)}
+                              required
+                            >
+                              <option value="" disabled>-- Select Role --</option>
+                              <option value="HOI">HOI</option>
+                              <option value="Nodal Teacher">Nodal Teacher</option>
+                              <option value="SMC Precedence">SMC Precedence</option>
+                              <option value="Eco Club Member">Eco Club Member</option>
+                              <option value="Local Influencer">Local Influencer</option>
+                              <option value="Other">Other</option>
+                            </select>
+                          </div>
+
+                          <div className="form-group">
+                            <label htmlFor="secondingContact">Contact Number</label>
+                            <input
+                              id="secondingContact"
+                              className={`form-control ${secondingContact.trim() ? 'answered' : ''}`}
+                              type="tel"
+                              value={secondingContact}
+                              onChange={(e) => setSecondingContact(e.target.value.replace(/\D/g, '').slice(0, 10))}
+                              placeholder="Enter 10-digit mobile number"
+                              inputMode="numeric"
+                              pattern="[6-9][0-9]{9}"
+                              maxLength={10}
+                              title="Enter a valid 10-digit Indian mobile number starting with 6, 7, 8, or 9"
+                              required
+                            />
+                          </div>
+                        </div>
+                      </div>
+                    )}
+
+                    {secondingName.trim() && secondingRole.trim() && secondingContact.trim() && (
+                      <div className="form-group full-width submit-button-wrapper">
+                        <button type="submit" className="btn btn-submit" disabled={isSubmitting}>
+                          {isSubmitting ? 'Saving...' : 'Submit'}
+                        </button>
+                      </div>
+                    )}
+                  </div>
+                </section>
+
+              )}
+
               {submitMessage.text && (
                 <div className={submitMessage.type === 'error' ? 'error-message' : 'success'}>
                   {submitMessage.text.split('\n').map((line, index) => (
@@ -839,16 +1056,11 @@ function App() {
                 </div>
               )}
 
-              {isContactNumberValid && (
-                <button type="submit" className="btn print-hide" disabled={isSubmitting}>
-                  {isSubmitting ? 'Saving...' : 'Submit'}
-                </button>
-              )}
 
             </form>
           )}
 
-          {isSubmitted && (
+          {showReport && (
             <section ref={scorecardRef} className="card scorecard-section">
               <div className="scorecard-topbar">
                 <div className="scorecard-heading-box">
@@ -859,7 +1071,7 @@ function App() {
               </div>
 
               <div className="scorecard-school-download-section">
-                <div className="scorecard-school-info-box">
+                <div className="scorecard-school-info-box school-info-box-with-button">
                   <div className="school-info-top">
                     <div className="school-info-icon">🏫</div>
                     <div>
@@ -872,13 +1084,15 @@ function App() {
                     <span className="school-meta-pill"><strong>Cluster:</strong> {selectedCluster}</span>
                     <span className="school-meta-pill"><strong>Zone:</strong> {selectedZone}</span>
                     <span className="school-meta-pill"><strong>District:</strong> {selectedDistrict}</span>
-                    <span className="school-meta-pill"><strong>Role:</strong> {role}</span>
+                    <span className="school-meta-pill"><strong>Discussion:</strong> {discussionParticipantName} ({discussionParticipantRole})</span>
                     <span className="school-meta-pill"><strong>Date:</strong> {evaluationDate}</span>
                   </div>
+                  <div className="school-info-button-wrap print-hide">
+                    <button onClick={handleDownloadPdf} className="btn-download-pdf" type="button">
+                      📄 Download Report
+                    </button>
+                  </div>
                 </div>
-                <button onClick={handleDownloadPdf} className="btn-download-pdf print-hide" type="button">
-                  📄 Download Report
-                </button>
               </div>
 
               <div className="scorecard-summary-grid">
