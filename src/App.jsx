@@ -8,6 +8,7 @@ import jsPDF from 'jspdf';
 import html2canvas from 'html2canvas';
 import { Filesystem, Directory } from '@capacitor/filesystem';
 import { Capacitor } from '@capacitor/core';
+import Login from './Login';
 
 // Eco-Meter 10 Criteria and their specific level statements
 const criteriaData = [
@@ -114,9 +115,93 @@ const criteriaData = [
 ];
 
 function App() {
+  const deriveEvaluatorName = (session) => {
+    return (
+      session?.user?.user_metadata?.full_name ||
+      session?.user?.user_metadata?.name ||
+      session?.user?.email ||
+      ''
+    );
+  };
+
   // Common Form States
   const [evaluatorName, setEvaluatorName] = useState("");
   const [evaluationDate, setEvaluationDate] = useState("");
+  const [session, setSession] = useState(null);
+  const [isAuthLoading, setIsAuthLoading] = useState(true);
+  const [isNameEditable, setIsNameEditable] = useState(false);
+
+  useEffect(() => {
+    const refreshSession = async () => {
+      try {
+        const { data: { session: currentSession } } = await supabase.auth.getSession();
+        if (currentSession) {
+          setSession(currentSession);
+          setEvaluatorName((currentName) => {
+            if (currentName && currentName.trim()) return currentName;
+            return deriveEvaluatorName(currentSession);
+          });
+        }
+      } catch (error) {
+        console.error('Error fetching current auth session:', error);
+      }
+    };
+
+    const initAuth = async () => {
+      if (typeof supabase.auth.getSessionFromUrl === 'function') {
+        try {
+          const { data: urlData, error: urlError } = await supabase.auth.getSessionFromUrl();
+          if (urlError && !urlError.message.toLowerCase().includes('no auth session')) {
+            console.error('Supabase auth redirect error:', urlError);
+          }
+
+          if (urlData?.session) {
+            setSession(urlData.session);
+            setEvaluatorName((currentName) => {
+              if (currentName && currentName.trim()) return currentName;
+              return deriveEvaluatorName(urlData.session);
+            });
+          }
+        } catch (error) {
+          console.error('Error checking auth redirect session:', error);
+        }
+      }
+
+      await refreshSession();
+      setIsAuthLoading(false);
+    };
+
+    initAuth();
+
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
+      setSession(session);
+      setEvaluatorName((currentName) => {
+        if (currentName && currentName.trim()) return currentName;
+        return session ? deriveEvaluatorName(session) : '';
+      });
+    });
+
+    const handleFocus = () => {
+      refreshSession();
+    };
+
+    window.addEventListener('focus', handleFocus);
+    document.addEventListener('visibilitychange', () => {
+      if (document.visibilityState === 'visible') {
+        refreshSession();
+      }
+    });
+
+    return () => {
+      subscription.unsubscribe();
+      window.removeEventListener('focus', handleFocus);
+      document.removeEventListener('visibilitychange', refreshSession);
+    };
+  }, []);
+
+  const handleLogout = async () => {
+    await supabase.auth.signOut();
+  };
   const [contactNumber, setContactNumber] = useState("");
   
   // Google Sheets Integration & Loading States
@@ -554,9 +639,36 @@ function App() {
       setIsSubmitting(false);
     }
   };
+  if (isAuthLoading) {
+    return (
+      <div className="login-loading-screen">
+        <div className="login-loading-card">
+          <div className="loading-spinner" aria-hidden="true"></div>
+          <p>Preparing your Eco Meter workspace...</p>
+        </div>
+      </div>
+    );
+  }
+
+  if (!session) {
+    return <Login />;
+  }
 
   return (
     <div className="app">
+      <div className="top-user-bar">
+        <div className="top-user-text">
+          {evaluatorName ? `Hello, ${evaluatorName}!` : 'Hello, Eco Meter evaluator!'}
+        </div>
+        <button
+          onClick={handleLogout}
+          className="logout-button"
+          type="button"
+        >
+          Logout
+        </button>
+      </div>
+      
       {isSubmitting && (
         <div className="saving-overlay" role="status" aria-live="polite">
           <div className="saving-popup">
@@ -570,7 +682,7 @@ function App() {
       <div className="container">
 
         {/* Header Section - Banner Style */}
-        <header className="header-banner print-hide">
+        <header className="header-banner">
           <div className="banner-container">
             <div className="banner-left">
               <img src={dseLogo} alt="DSE Logo" className="banner-logo" />
@@ -592,7 +704,7 @@ function App() {
 
         <div className="content">
           {!showReport && (
-            <form onSubmit={handleSubmit} className="print-hide">
+            <form onSubmit={handleSubmit}>
               <section className="card school-info-card" ref={schoolSelectionRef}>
                 <div className="card-header">
                   <div>
@@ -691,7 +803,6 @@ function App() {
                         onChange={(e) => {
                           setSelectedCluster(e.target.value);
                           setSchoolName('');
-                          setEvaluatorName('');
                           setEvaluationDate('');
                           setContactNumber('');
                         }}
@@ -711,7 +822,6 @@ function App() {
                         value={schoolName}
                         onChange={(e) => {
                           setSchoolName(e.target.value);
-                          setEvaluatorName('');
                           setEvaluationDate('');
                           setContactNumber('');
                         }}
@@ -735,18 +845,34 @@ function App() {
                       </div>
                     </div>
                     <div className="form-grid">
-                      <div className="form-group">
-                        <label htmlFor="evaluatorName">Name</label>
+                      <div className="form-group evaluator-name-group">
+                      <label htmlFor="evaluatorName">Name</label>
+                      <div className="name-input-row">
                         <input
                           id="evaluatorName"
                           className="form-control"
                           type="text"
                           value={evaluatorName}
                           onChange={(e) => setEvaluatorName(e.target.value)}
-                          placeholder="Enter Evaluator Name"
+                          placeholder="Auto-filled from Google"
+                          readOnly={!isNameEditable}
+                          style={isNameEditable ? { backgroundColor: '#ffffff', cursor: 'text', color: '#111' } : { backgroundColor: '#e9ecef', cursor: 'not-allowed', color: '#495057' }}
                           required
                         />
+                        <button
+                          type="button"
+                          className="name-edit-toggle"
+                          onClick={() => setIsNameEditable((prev) => !prev)}
+                        >
+                          {isNameEditable ? 'Lock' : 'Edit'}
+                        </button>
                       </div>
+                      <div className="name-helper-text">
+                        {isNameEditable
+                          ? 'Type the evaluator name, then lock to prevent accidental changes.'
+                          : 'Autofilled from login. Click Edit to change the name.'}
+                      </div>
+                    </div>
 
                       {evaluatorName && evaluatorName.trim() !== '' && (
                         <div className="form-group">
