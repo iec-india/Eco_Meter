@@ -126,7 +126,7 @@ function App() {
 
   // Common Form States
   const [evaluatorName, setEvaluatorName] = useState("");
-  const [evaluationDate, setEvaluationDate] = useState("");
+  const [evaluationDate, setEvaluationDate] = useState(() => new Date().toISOString().slice(0, 10));
   const [session, setSession] = useState(null);
   const [isAuthLoading, setIsAuthLoading] = useState(true);
   const [isNameEditable, setIsNameEditable] = useState(false);
@@ -214,6 +214,7 @@ function App() {
   const [selectedZone, setSelectedZone] = useState('');
   const [selectedCluster, setSelectedCluster] = useState('');
   const [schoolName, setSchoolName] = useState('');
+  const [showSchoolSelection, setShowSchoolSelection] = useState(false);
   const [occasion, setOccasion] = useState('');
   const [occasionOther, setOccasionOther] = useState('');
   const [smcAttendees, setSmcAttendees] = useState('');
@@ -236,6 +237,20 @@ function App() {
 
   // 1. Fetch School List from Google Sheets
   const isContactNumberValid = /^[6-9]\d{9}$/.test(contactNumber.trim());
+  const shouldShowSchoolSelection = isContactNumberValid && showSchoolSelection;
+  const shouldShowCriteria = !!schoolName && !!selectedCluster && isContactNumberValid;
+
+  const resetSchoolFlow = () => {
+    setSelectedState('');
+    setSelectedDistrict('');
+    setSelectedZone('');
+    setSelectedCluster('');
+    setSchoolName('');
+    setShowSchoolSelection(false);
+    setScores({});
+    setActiveCriteriaIndex(0);
+    setShowReport(false);
+  };
 
   useEffect(() => {
     // REPLACE THIS URL WITH YOUR GOOGLE APPS SCRIPT WEB APP URL
@@ -705,18 +720,105 @@ function App() {
         <div className="content">
           {!showReport && (
             <form onSubmit={handleSubmit}>
-              <section className="card school-info-card" ref={schoolSelectionRef}>
+              <section className="card nodal-teacher-card school-info-card">
                 <div className="card-header">
                   <div>
-                    <h2 className="card-title">School Selection</h2>
+                    <h2 className="card-title">Nodal Teacher Details</h2>
                     <p className="card-subtitle">
-                      Follow the steps to select your school from the list.
+                      
                     </p>
                   </div>
-                  <div className="question-progress-widget"></div>
                 </div>
 
-                <div className="school-selection-fields">
+                <div className="form-grid">
+                  <div className="form-group evaluator-name-group">
+                    <label htmlFor="evaluatorName">Name</label>
+                    <div className="name-input-row">
+                      <input
+                        id="evaluatorName"
+                        className="form-control"
+                        type="text"
+                        value={evaluatorName}
+                        onChange={(e) => setEvaluatorName(e.target.value)}
+                        placeholder="Auto-filled from Google"
+                        readOnly={!isNameEditable}
+                        style={isNameEditable ? { backgroundColor: '#ffffff', cursor: 'text', color: '#111' } : { backgroundColor: '#e9ecef', cursor: 'not-allowed', color: '#495057' }}
+                        required
+                      />
+                      <button
+                        type="button"
+                        className="name-edit-toggle"
+                        onClick={() => setIsNameEditable((prev) => !prev)}
+                      >
+                        {isNameEditable ? 'Lock' : 'Edit'}
+                      </button>
+                    </div>
+                    <div className="name-helper-text">
+                      {isNameEditable
+                        ? 'Type the evaluator name, then lock to prevent accidental changes.'
+                        : ''}
+                    </div>
+                  </div>
+
+                  <div className="form-group">
+                    <label htmlFor="evaluationDate">Evaluation Date</label>
+                    <input
+                      id="evaluationDate"
+                      className="form-control"
+                      type="date"
+                      value={evaluationDate}
+                      onChange={(e) => setEvaluationDate(e.target.value)}
+                      required
+                    />
+                  </div>
+
+                  <div className="form-group">
+                    <label htmlFor="contactNumber">Contact Number</label>
+                    <input
+                      id="contactNumber"
+                      className="form-control"
+                      type="tel"
+                      value={contactNumber}
+                      onChange={(e) => {
+                        const nextNumber = e.target.value.replace(/\D/g, '').slice(0, 10);
+                        const isValidNextNumber = /^[6-9]\d{9}$/.test(nextNumber);
+
+                        setContactNumber(nextNumber);
+
+                        if (!isValidNextNumber) {
+                          resetSchoolFlow();
+                          return;
+                        }
+
+                        setShowSchoolSelection(true);
+                        setScores({});
+                        setActiveCriteriaIndex(0);
+                        setShowReport(false);
+                      }}
+                      placeholder="Enter 10-digit mobile number"
+                      inputMode="numeric"
+                      pattern="[6-9][0-9]{9}"
+                      maxLength={10}
+                      title="Enter a valid 10-digit Indian mobile number starting with 6, 7, 8, or 9"
+                      required
+                    />
+                  </div>
+                </div>
+              </section>
+
+              {shouldShowSchoolSelection && (
+                <section className="card school-info-card" ref={schoolSelectionRef}>
+                  <div className="card-header">
+                    <div>
+                      <h2 className="card-title">School Selection</h2>
+                      <p className="card-subtitle">
+                        
+                      </p>
+                    </div>
+                    <div className="question-progress-widget"></div>
+                  </div>
+
+                  <div className="school-selection-fields">
                   <div className="school-field-item">
                     <label className="school-field-label">State</label>
                     {isLoadingSchools ? (
@@ -737,9 +839,6 @@ function App() {
                           setSelectedZone('');
                           setSelectedCluster('');
                           setSchoolName('');
-                          setEvaluatorName('');
-                          setEvaluationDate('');
-                          setContactNumber('');
                         }}
                         required
                       >
@@ -760,9 +859,6 @@ function App() {
                           setSelectedZone('');
                           setSelectedCluster('');
                           setSchoolName('');
-                          setEvaluatorName('');
-                          setEvaluationDate('');
-                          setContactNumber('');
                         }}
                         required
                       >
@@ -782,9 +878,6 @@ function App() {
                           setSelectedZone(e.target.value);
                           setSelectedCluster('');
                           setSchoolName('');
-                          setEvaluatorName('');
-                          setEvaluationDate('');
-                          setContactNumber('');
                         }}
                         required
                       >
@@ -803,8 +896,6 @@ function App() {
                         onChange={(e) => {
                           setSelectedCluster(e.target.value);
                           setSchoolName('');
-                          setEvaluationDate('');
-                          setContactNumber('');
                         }}
                         required
                       >
@@ -822,8 +913,6 @@ function App() {
                         value={schoolName}
                         onChange={(e) => {
                           setSchoolName(e.target.value);
-                          setEvaluationDate('');
-                          setContactNumber('');
                         }}
                         required
                         style={{ cursor: 'pointer' }}
@@ -834,89 +923,12 @@ function App() {
                     </div>
                   )}
 
-                </div>
+                  </div>
 
-                {schoolName && (
-                  <>
-                    <hr style={{ border: 'none', borderTop: '1px solid #ececec', margin: '30px 0' }} />
-                    <div className="card-header">
-                      <div>
-                        <h2 className="card-title">Nodal Teacher Details</h2>
-                      </div>
-                    </div>
-                    <div className="form-grid">
-                      <div className="form-group evaluator-name-group">
-                      <label htmlFor="evaluatorName">Name</label>
-                      <div className="name-input-row">
-                        <input
-                          id="evaluatorName"
-                          className="form-control"
-                          type="text"
-                          value={evaluatorName}
-                          onChange={(e) => setEvaluatorName(e.target.value)}
-                          placeholder="Auto-filled from Google"
-                          readOnly={!isNameEditable}
-                          style={isNameEditable ? { backgroundColor: '#ffffff', cursor: 'text', color: '#111' } : { backgroundColor: '#e9ecef', cursor: 'not-allowed', color: '#495057' }}
-                          required
-                        />
-                        <button
-                          type="button"
-                          className="name-edit-toggle"
-                          onClick={() => setIsNameEditable((prev) => !prev)}
-                        >
-                          {isNameEditable ? 'Lock' : 'Edit'}
-                        </button>
-                      </div>
-                      <div className="name-helper-text">
-                        {isNameEditable
-                          ? 'Type the evaluator name, then lock to prevent accidental changes.'
-                          : 'Autofilled from login. Click Edit to change the name.'}
-                      </div>
-                    </div>
+                </section>
+              )}
 
-                      {evaluatorName && evaluatorName.trim() !== '' && (
-                        <div className="form-group">
-                          <label htmlFor="evaluationDate">Evaluation Date</label>
-                          <input
-                            id="evaluationDate"
-                            className="form-control"
-                            type="date"
-                            value={evaluationDate}
-                            onChange={(e) => setEvaluationDate(e.target.value)}
-                            required
-                          />
-                        </div>
-                      )}
-
-                      {evaluationDate && (
-                        <div className="form-group">
-                          <label htmlFor="contactNumber">Contact Number</label>
-                          <input
-                            id="contactNumber"
-                            className="form-control"
-                            type="tel"
-                            value={contactNumber}
-                            onChange={(e) => {
-                              setContactNumber(e.target.value.replace(/\D/g, '').slice(0, 10));
-                              setScores({});
-                              setActiveCriteriaIndex(0);
-                              setShowReport(false);
-                            }}
-                            placeholder="Enter 10-digit mobile number"
-                            inputMode="numeric"
-                            pattern="[6-9][0-9]{9}"
-                            maxLength={10}
-                            title="Enter a valid 10-digit Indian mobile number starting with 6, 7, 8, or 9"
-                            required
-                          />
-                        </div>
-                      )}
-                    </div>
-                  </>
-                )}
-              </section>
-
-              {isContactNumberValid && (
+              {shouldShowCriteria && (
                 <section className="card" ref={criteriaSectionRef}>
                   <div className="card-header">
                     <div>
