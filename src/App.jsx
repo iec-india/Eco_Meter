@@ -8,6 +8,7 @@ import jsPDF from 'jspdf';
 import html2canvas from 'html2canvas';
 import { Filesystem, Directory } from '@capacitor/filesystem';
 import { Capacitor } from '@capacitor/core';
+import { App as CapacitorApp } from '@capacitor/app';
 import Login from './Login';
 
 // Eco-Meter 10 Criteria and their specific level statements
@@ -180,7 +181,42 @@ function App() {
         return session ? deriveEvaluatorName(session) : '';
       });
     });
-
+    CapacitorApp.addListener('appUrlOpen', async (event) => {
+      const url = event.url;
+      
+      if (url.includes('login-callback')) {
+        try {
+          // 1. अगर URL में '?code=' है (PKCE Flow)
+          if (url.includes('code=')) {
+            const params = new URLSearchParams(url.split('?')[1]);
+            const code = params.get('code');
+            if (code) {
+              const { data } = await supabase.auth.exchangeCodeForSession(code);
+              if (data?.session) {
+                setSession(data.session);
+              }
+            }
+          } 
+          // 2. अगर URL में '#access_token=' है (Implicit Flow)
+          else if (url.includes('access_token=')) {
+            const params = new URLSearchParams(url.split('#')[1]);
+            const accessToken = params.get('access_token');
+            const refreshToken = params.get('refresh_token');
+            if (accessToken && refreshToken) {
+              const { data } = await supabase.auth.setSession({
+                access_token: accessToken,
+                refresh_token: refreshToken
+              });
+              if (data?.session) {
+                setSession(data.session);
+              }
+            }
+          }
+        } catch (error) {
+          console.error('Auth redirect error:', error);
+        }
+      }
+    });
     const handleFocus = () => {
       refreshSession();
     };
